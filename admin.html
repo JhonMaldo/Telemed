@@ -548,50 +548,52 @@
                 <button class="close-modal">&times;</button>
             </div>
             <form id="doctor-form">
-                <input type="hidden" id="doctor-id">
+                <input type="hidden" id="doctor-id" name="doctor-id">
+                
                 <div class="form-row">
                     <div class="form-group">
                         <label for="doctor-firstname">Nombre</label>
-                        <input type="text" id="doctor-firstname" required>
+                        <input type="text" id="doctor-firstname" name="doctor-firstname" required>
                     </div>
                     <div class="form-group">
                         <label for="doctor-lastname">Apellido</label>
-                        <input type="text" id="doctor-lastname" required>
+                        <input type="text" id="doctor-lastname" name="doctor-lastname" required>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="doctor-email">Email</label>
-                    <input type="email" id="doctor-email" required>
+                    <input type="email" id="doctor-email" name="doctor-email" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="doctor-phone">Teléfono</label>
-                    <input type="tel" id="doctor-phone" required>
+                    <input type="tel" id="doctor-phone" name="doctor-phone" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="doctor-specialty">Especialidad</label>
-                    <select id="doctor-specialty" required>
+                    <select id="doctor-specialty" name="doctor-specialty" required>
                         <option value="">Seleccione especialidad</option>
-                        <option value="cardiology">Cardiología</option>
-                        <option value="dermatology">Dermatología</option>
-                        <option value="pediatrics">Pediatría</option>
-                        <option value="neurology">Neurología</option>
-                        <option value="orthopedics">Ortopedia</option>
+                        <option value="Cardiología">Cardiología</option>
+                        <option value="Dermatología">Dermatología</option>
+                        <option value="Pediatría">Pediatría</option>
+                        <option value="Neurología">Neurología</option>
+                        <option value="Ortopedia">Ortopedia</option>
+                        <option value="Medicina General">Medicina General</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="doctor-license">Número de Licencia</label>
-                    <input type="text" id="doctor-license" required>
+                    <input type="text" id="doctor-license" name="doctor-license" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="doctor-status">Estado</label>
-                    <select id="doctor-status" required>
-                        <option value="active">Activo</option>
-                        <option value="inactive">Inactivo</option>
+                    <select id="doctor-status" name="doctor-status" required>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
                 
