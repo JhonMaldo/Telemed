@@ -22,6 +22,9 @@ function showSection(sectionId) {
     if (sectionId === 'consultations') {
         cargarConsultas();
     }
+    if (sectionId === 'medical-records') {
+        cargarExpedientes();
+    }
     
     // Update section title
     const titles = {
@@ -108,8 +111,20 @@ function mostrarPacientes(pacientes) {
 
 // Función para ver expediente
 function verExpediente(idPaciente) {
-    alert('Ver expediente del paciente ID: ' + idPaciente);
-    // Aquí puedes redirigir o cargar el expediente
+    // Cambiar a la sección de expedientes y cargar el expediente específico
+    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+    document.querySelector('[data-section="medical-records"]').classList.add('active');
+    showSection('medical-records');
+    
+    // Esperar un momento para que cargue la lista y luego seleccionar el paciente
+    setTimeout(() => {
+        const pacienteItem = document.querySelector(`[data-paciente="${idPaciente}"]`);
+        if (pacienteItem) {
+            pacienteItem.click();
+        } else {
+            alert('Expediente no encontrado para este paciente');
+        }
+    }, 1000);
 }
 
 // Función para agendar cita
@@ -118,7 +133,6 @@ function agendarCita(idPaciente) {
     // Aquí puedes abrir un modal para agendar cita
 }
 
-// Función para cargar consultas
 // Función para cargar consultas
 function cargarConsultas() {
     const loadingElement = document.getElementById('loading-consultas');
@@ -129,7 +143,6 @@ function cargarConsultas() {
     container.innerHTML = '';
     noConsultasMessage.style.display = 'none';
 
-    // 🔥 CORREGIR ESTA LÍNEA: cambiar 'databases' por 'database'
     fetch('database/get_consultas.php')
         .then(response => response.json())
         .then(data => {
@@ -198,3 +211,189 @@ function mostrarConsultas(consultas) {
     container.innerHTML = html;
     noConsultasMessage.style.display = 'none';
 }
+
+// Función para cargar expedientes
+function cargarExpedientes() {
+    console.log('🔍 cargarExpedientes() ejecutándose...');
+    
+    const loadingElement = document.getElementById('loading-expedientes');
+    const container = document.getElementById('lista-pacientes-expedientes');
+    
+    loadingElement.style.display = 'block';
+    container.innerHTML = '';
+
+    console.log('📡 Haciendo fetch a database/get_expedientes.php...');
+    
+    fetch('database/get_expedientes.php')
+        .then(response => {
+            console.log('📡 Status de respuesta:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('✅ Datos recibidos:', data);
+            if (data.success) {
+                mostrarListaPacientes(data.expedientes);
+            } else {
+                console.error('Error:', data.error);
+                container.innerHTML = '<div class="error-message">Error al cargar expedientes: ' + data.error + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error en fetch:', error);
+            container.innerHTML = '<div class="error-message">Error al conectar con el servidor: ' + error.message + '</div>';
+        })
+        .finally(() => {
+            loadingElement.style.display = 'none';
+        });
+}
+
+// Mostrar lista de pacientes con expediente
+function mostrarListaPacientes(expedientes) {
+    const container = document.getElementById('lista-pacientes-expedientes');
+    
+    if (!expedientes || expedientes.length === 0) {
+        container.innerHTML = '<p>No hay expedientes registrados</p>';
+        return;
+    }
+
+    let html = '';
+    expedientes.forEach(expediente => {
+        html += `
+            <div class="record-item" data-paciente="${expediente.id_paciente}">
+                <h4>${expediente.nombre_paciente}</h4>
+                <p>${expediente.edad || 'Edad no disponible'} · ${expediente.enfermedades_cronicas || 'Sin diagnóstico'}</p>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    
+    // Agregar event listeners a los items
+    document.querySelectorAll('.record-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.record-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const idPaciente = this.dataset.paciente;
+            cargarExpedientePaciente(idPaciente);
+        });
+    });
+}
+
+// Cargar expediente específico de un paciente
+function cargarExpedientePaciente(idPaciente) {
+    const container = document.getElementById('expediente-detalle');
+    container.innerHTML = '<p>Cargando expediente...</p>';
+
+    fetch(`database/get_expediente.php?id_paciente=${idPaciente}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarExpedienteDetalle(data.expediente);
+            } else {
+                container.innerHTML = '<div class="error-message">Error: ' + data.error + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error al cargar expediente</div>';
+        });
+}
+
+// Mostrar detalle del expediente
+function mostrarExpedienteDetalle(expediente) {
+    const container = document.getElementById('expediente-detalle');
+    
+    let html = `
+        <h3>Expediente de ${expediente.nombre_paciente}</h3>
+        <div class="expediente-info">
+            <div class="form-group">
+                <label for="historial-medico">Historial Médico</label>
+                <textarea id="historial-medico" rows="4" class="form-control">${expediente.historial_medico || ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="alergias">Alergias</label>
+                <input type="text" id="alergias" class="form-control" value="${expediente.alergias || 'Ninguna'}">
+            </div>
+            
+            <div class="form-group">
+                <label for="medicacion-actual">Medicación Actual</label>
+                <textarea id="medicacion-actual" rows="3" class="form-control">${expediente.medicacion_actual || ''}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="enfermedades-cronicas">Enfermedades Crónicas</label>
+                <input type="text" id="enfermedades-cronicas" class="form-control" value="${expediente.enfermedades_cronicas || 'Ninguna'}">
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="grupo-sanguineo">Grupo Sanguíneo</label>
+                        <input type="text" id="grupo-sanguineo" class="form-control" value="${expediente.grupo_sanguineo || 'No registrado'}">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="altura">Altura (m)</label>
+                        <input type="number" id="altura" class="form-control" value="${expediente.altura || ''}" step="0.01">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="peso">Peso (kg)</label>
+                        <input type="number" id="peso" class="form-control" value="${expediente.peso || ''}" step="0.1">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="actualizarExpediente(${expediente.id_paciente})">Actualizar Expediente</button>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+// Función para actualizar expediente (placeholder)
+function actualizarExpediente(idPaciente) {
+    alert('Actualizando expediente del paciente ID: ' + idPaciente);
+    // Aquí iría la lógica para guardar los cambios
+}
+
+// Medical Records - Patient Selection (mantener por compatibilidad)
+document.querySelectorAll('.record-item').forEach(item => {
+    if (!item.dataset.paciente) {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.record-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            const patientName = this.querySelector('h4').textContent;
+            document.querySelector('.records-content h3').textContent = `Expediente de ${patientName}`;
+        });
+    }
+});
+
+// Notifications - Mark as read
+document.querySelectorAll('.notification-item.unread').forEach(item => {
+    item.addEventListener('click', function() {
+        this.classList.remove('unread');
+        
+        const badge = document.querySelector('.notification-badge');
+        let count = parseInt(badge.textContent);
+        if (count > 0) {
+            count--;
+            badge.textContent = count;
+        }
+    });
+});
+
+// Sample data for demonstration
+document.addEventListener('DOMContentLoaded', function() {
+    // Set current date for next appointment
+    const nextAppointment = document.getElementById('next-appointment');
+    if (nextAppointment) {
+        const nextMonth = new Date();
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        nextAppointment.valueAsDate = nextMonth;
+    }
+});
