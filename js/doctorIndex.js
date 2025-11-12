@@ -1,148 +1,71 @@
-// Simulación de citas programadas
-const citas = [
-  { paciente: "Juan Pérez", especialidad: "Cardiología", fecha: "2025-10-04", hora: "10:00" },
-  { paciente: "María López", especialidad: "Dermatología", fecha: "2025-10-04", hora: "12:30" },
-  { paciente: "Carlos Ramírez", especialidad: "Pediatría", fecha: "2025-10-05", hora: "09:00" }
-];
+// Navigation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            if (item.dataset.section) {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    showSection(this.dataset.section);
+                });
+            }
+        });
 
-// Pacientes simulados
-const pacientes = [
-  {
-    nombre: "Juan Pérez",
-    edad: 34,
-    telefono: "555-1234",
-    correo: "juan.perez@mail.com",
-    historial: "Hipertensión, consulta en 2024-11-10"
-  },
-  {
-    nombre: "María López",
-    edad: 28,
-    telefono: "555-5678",
-    correo: "maria.lopez@mail.com",
-    historial: "Alergia a penicilina, consulta en 2025-01-15"
-  },
-  {
-    nombre: "Carlos Ramírez",
-    edad: 42,
-    telefono: "555-8765",
-    correo: "carlos.ramirez@mail.com",
-    historial: "Diabetes tipo 2, consulta en 2025-03-22"
-  }
-];
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update section title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'patients': 'Mis Pacientes',
+                'consultations': 'Consultas',
+                'medical-records': 'Expedientes Médicos',
+                'prescriptions': 'Recetas Médicas',
+                'notifications': 'Notificaciones'
+            };
+            
+            document.getElementById('section-title').textContent = titles[sectionId] || 'Dashboard';
+        }
 
-// Mostrar citas en el panel
-function mostrarCitas() {
-  const lista = document.getElementById("lista-citas");
-  lista.innerHTML = "";
-  if (citas.length === 0) {
-    lista.innerHTML = "<p>No hay citas programadas para hoy.</p>";
-    return;
-  }
-  citas.forEach(cita => {
-    const card = document.createElement("div");
-    card.className = "cita-card";
-    card.innerHTML = `
-      <h4>Paciente: ${cita.paciente}</h4>
-      <p><strong>Especialidad:</strong> ${cita.especialidad}</p>
-      <p><strong>Fecha:</strong> ${cita.fecha} <strong>Hora:</strong> ${cita.hora}</p>
-      <button class="btn-primary" onclick="cancelarCita('${cita.paciente}')">Cancelar</button>
-    `;
-    lista.appendChild(card);
-  });
-}
+        // Medical Records - Patient Selection
+        document.querySelectorAll('.record-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.record-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // In a real application, this would load the patient's records
+                const patientName = this.querySelector('h4').textContent;
+                document.querySelector('.records-content h3').textContent = `Expediente de ${patientName}`;
+            });
+        });
 
-// Cancelar cita (simulado)
-function cancelarCita(paciente) {
-  const idx = citas.findIndex(c => c.paciente === paciente);
-  if (idx !== -1) {
-    citas.splice(idx, 1);
-    mostrarCitas();
-    alert("Cita cancelada para " + paciente);
-  }
-}
+        // Notifications - Mark as read
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.remove('unread');
+                
+                // Update notification badge
+                const badge = document.querySelector('.notification-badge');
+                let count = parseInt(badge.textContent);
+                if (count > 0) {
+                    count--;
+                    badge.textContent = count;
+                }
+            });
+        });
 
-// Mostrar pacientes en la tabla
-function mostrarPacientes() {
-  const tbody = document.querySelector("#tabla-pacientes tbody");
-  tbody.innerHTML = "";
-  pacientes.forEach((p, idx) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.nombre}</td>
-      <td>${p.edad}</td>
-      <td>${p.telefono}</td>
-      <td><button class="btn-detalle" onclick="verDetallePaciente(${idx})">Ver Detalles</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+        // Form submissions
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Perfil actualizado correctamente');
+        });
 
-// Mostrar modal con detalles
-function verDetallePaciente(idx) {
-  const p = pacientes[idx];
-  document.getElementById("detalle-paciente").innerHTML = `
-    <strong>Nombre:</strong> ${p.nombre}<br>
-    <strong>Edad:</strong> ${p.edad}<br>
-    <strong>Teléfono:</strong> ${p.telefono}<br>
-    <strong>Correo:</strong> ${p.correo}<br>
-    <strong>Historial:</strong> ${p.historial}
-  `;
-  document.getElementById("modal-paciente").style.display = "block";
-}
-
-// Cerrar modal
-function cerrarModalPaciente() {
-  document.getElementById("modal-paciente").style.display = "none";
-}
-
-// CHATBOT
-function sendMessage() {
-  const input = document.getElementById("user-input");
-  const chatBox = document.getElementById("chat-box");
-
-  const userText = input.value.trim();
-  if (userText === "") return;
-
-  // Mensaje del usuario
-  const userMsg = document.createElement("div");
-  userMsg.classList.add("message", "user");
-  userMsg.textContent = "👨‍⚕️ " + userText;
-  chatBox.appendChild(userMsg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  // Respuesta del bot
-  setTimeout(() => {
-    const botMsg = document.createElement("div");
-    botMsg.classList.add("message", "bot");
-    botMsg.textContent = "🤖 Soporte IA: Su consulta ha sido registrada. ¿Desea información médica o ayuda técnica?";
-    chatBox.appendChild(botMsg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }, 1000);
-
-  input.value = "";
-}
-
-// Enviar con Enter
-document.getElementById("user-input").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
-
-// Recetas: botón "Ver PDF" (simulado)
-document.querySelectorAll(".btn-receta").forEach(btn => {
-  btn.addEventListener("click", function() {
-    alert("Descargando receta en PDF...");
-  });
-});
-
-// Crear nueva receta (simulado)
-document.querySelector(".btn-primary").addEventListener("click", function() {
-  alert("Función para crear nueva receta (simulada).");
-});
-
-// Inicializar citas y pacientes al cargar
-window.onload = function() {
-  mostrarCitas();
-  mostrarPacientes();
-}
+        // Sample data for demonstration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date for next appointment
+            const nextAppointment = document.getElementById('next-appointment');
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            nextAppointment.valueAsDate = nextMonth;
+        });
