@@ -4,10 +4,11 @@ include 'conexion.php';
 header('Content-Type: application/json');
 
 try {
-    // TEMPORAL: Mostrar todos los usuarios para debug
-    $sql = "SELECT id_usuario, nombre_completo, corre_electronico, role, status, creado_en 
+    // CORREGIDO: 'Activo' en lugar de 'Active'
+    $sql = "SELECT id_usuario, nombre_completo, corre_electronico, creado_en 
             FROM usuarios 
-            ORDER BY role, nombre_completo";
+            WHERE role = 'Paciente' AND status = 'Activo' 
+            ORDER BY nombre_completo";
     
     $result = $conn->query($sql);
     
@@ -15,16 +16,15 @@ try {
         throw new Exception("Error en consulta: " . $conn->error);
     }
     
-    $usuarios = [];
+    $pacientes = [];
     while($row = $result->fetch_assoc()) {
-        $usuarios[] = $row;
+        $pacientes[] = $row;
     }
     
     echo json_encode([
         'success' => true,
-        'usuarios' => $usuarios,
-        'total_usuarios' => count($usuarios),
-        'mensaje' => 'Esto muestra TODOS los usuarios. Los pacientes deben tener role="Paciente"'
+        'pacientes' => $pacientes,
+        'total' => count($pacientes)
     ]);
     
 } catch (Exception $e) {
