@@ -19,6 +19,9 @@ function showSection(sectionId) {
     if (sectionId === 'patients') {
         cargarPacientes();
     }
+    if (sectionId === 'consultations') {
+        cargarConsultas();
+    }
     
     // Update section title
     const titles = {
@@ -115,38 +118,83 @@ function agendarCita(idPaciente) {
     // Aquí puedes abrir un modal para agendar cita
 }
 
-// Medical Records - Patient Selection
-document.querySelectorAll('.record-item').forEach(item => {
-    item.addEventListener('click', function() {
-        document.querySelectorAll('.record-item').forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        
-        const patientName = this.querySelector('h4').textContent;
-        document.querySelector('.records-content h3').textContent = `Expediente de ${patientName}`;
-    });
-});
+// Función para cargar consultas
+// Función para cargar consultas
+function cargarConsultas() {
+    const loadingElement = document.getElementById('loading-consultas');
+    const container = document.getElementById('consultas-list-container');
+    const noConsultasMessage = document.getElementById('no-consultas-message');
+    
+    loadingElement.style.display = 'block';
+    container.innerHTML = '';
+    noConsultasMessage.style.display = 'none';
 
-// Notifications - Mark as read
-document.querySelectorAll('.notification-item.unread').forEach(item => {
-    item.addEventListener('click', function() {
-        this.classList.remove('unread');
-        
-        const badge = document.querySelector('.notification-badge');
-        let count = parseInt(badge.textContent);
-        if (count > 0) {
-            count--;
-            badge.textContent = count;
-        }
-    });
-});
+    // 🔥 CORREGIR ESTA LÍNEA: cambiar 'databases' por 'database'
+    fetch('database/get_consultas.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarConsultas(data.consultas);
+            } else {
+                console.error('Error:', data.error);
+                container.innerHTML = '<div class="error-message">Error al cargar consultas: ' + data.error + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error al conectar con el servidor</div>';
+        })
+        .finally(() => {
+            loadingElement.style.display = 'none';
+        });
+}
 
-// Sample data for demonstration
-document.addEventListener('DOMContentLoaded', function() {
-    // Set current date for next appointment
-    const nextAppointment = document.getElementById('next-appointment');
-    if (nextAppointment) {
-        const nextMonth = new Date();
-        nextMonth.setMonth(nextMonth.getMonth() + 1);
-        nextAppointment.valueAsDate = nextMonth;
+// Función para mostrar consultas
+function mostrarConsultas(consultas) {
+    const container = document.getElementById('consultas-list-container');
+    const noConsultasMessage = document.getElementById('no-consultas-message');
+    
+    console.log('📋 Consultas recibidas:', consultas);
+    
+    if (!consultas || consultas.length === 0) {
+        noConsultasMessage.style.display = 'block';
+        container.innerHTML = '';
+        return;
     }
-});
+
+    let html = '';
+    consultas.forEach(consulta => {
+        // Formatear fecha más legible
+        const fecha = new Date(consulta.fecha_inicio);
+        const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        html += `
+            <div class="appointment-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                <div class="appointment-info">
+                    <h4>Consulta #${consulta.id_consulta || 'N/A'}</h4>
+                    <p><i class="far fa-calendar"></i> <strong>Fecha:</strong> ${fechaFormateada}</p>
+                    <p><i class="fas fa-info-circle"></i> <strong>Notas:</strong> ${consulta.notas || 'Sin notas'}</p>
+                    ${consulta.url_video && consulta.url_video !== '' ? 
+                        `<p><i class="fas fa-video"></i> <a href="${consulta.url_video}" target="_blank">Ver grabación</a></p>` : 
+                        '<p><i class="fas fa-video"></i> No hay grabación disponible</p>'
+                    }
+                    <p><i class="fas fa-record-vinyl"></i> <strong>Grabado:</strong> ${consulta.grabado ? 'Sí' : 'No'}</p>
+                </div>
+                <div class="appointment-actions" style="margin-top: 10px;">
+                    <button class="btn btn-success">Iniciar Consulta</button>
+                    <button class="btn">Ver Detalles</button>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    noConsultasMessage.style.display = 'none';
+}
