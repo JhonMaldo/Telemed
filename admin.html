@@ -222,64 +222,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>PAC-001</td>
-                            <td>Juan Pérez</td>
-                            <td>juan.perez@example.com</td>
-                            <td>+57 300 123 4567</td>
-                            <td>45</td>
-                            <td>Masculino</td>
-                            <td><span class="status-badge status-active">Activo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning edit-patient" data-id="1">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-patient" data-id="1">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>PAC-002</td>
-                            <td>María González</td>
-                            <td>maria.gonzalez@example.com</td>
-                            <td>+57 301 234 5678</td>
-                            <td>52</td>
-                            <td>Femenino</td>
-                            <td><span class="status-badge status-active">Activo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning edit-patient" data-id="2">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-patient" data-id="2">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>PAC-003</td>
-                            <td>Carlos Rodríguez</td>
-                            <td>carlos.rodriguez@example.com</td>
-                            <td>+57 302 345 6789</td>
-                            <td>38</td>
-                            <td>Masculino</td>
-                            <td><span class="status-badge status-inactive">Inactivo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning edit-patient" data-id="3">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger delete-patient" data-id="3">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tbody id="pacientes-table-body">
                     </tbody>
                 </table>
             </div>
@@ -606,58 +549,57 @@
     <div id="patient-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="patient-modal-title">Agregar Nuevo Paciente</h3>
+                <h3 id="patient-modal-title" name="patient-modal-title">Agregar Nuevo Paciente</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <form id="patient-form">
-                <input type="hidden" id="patient-id">
+                <input type="hidden" id="patient-id" name="patient-id">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="patient-firstname">Nombre</label>
-                        <input type="text" id="patient-firstname" required>
+                        <input type="text" id="patient-firstname" name="patient-firstname" required>
                     </div>
                     <div class="form-group">
                         <label for="patient-lastname">Apellido</label>
-                        <input type="text" id="patient-lastname" required>
+                        <input type="text" id="patient-lastname" name="patient-lastname" required>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="patient-email">Email</label>
-                    <input type="email" id="patient-email" required>
+                    <input type="email" id="patient-email" name="patient-email" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="patient-phone">Teléfono</label>
-                    <input type="tel" id="patient-phone" required>
+                    <input type="tel" id="patient-phone" name="patient-phone" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="patient-birthdate">Fecha de Nacimiento</label>
-                        <input type="date" id="patient-birthdate" required>
+                        <input type="date" id="patient-birthdate" name="patient-birthdate" required>
                     </div>
                     <div class="form-group">
                         <label for="patient-gender">Género</label>
-                        <select id="patient-gender" required>
+                        <select id="patient-gender" name="patient-gender" required>
                             <option value="">Seleccione</option>
-                            <option value="male">Masculino</option>
-                            <option value="female">Femenino</option>
-                            <option value="other">Otro</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="patient-address">Dirección</label>
-                    <input type="text" id="patient-address">
+                    <input type="text" id="patient-address" name="patient-address">
                 </div>
                 
                 <div class="form-group">
                     <label for="patient-status">Estado</label>
-                    <select id="patient-status" required>
-                        <option value="active">Activo</option>
-                        <option value="inactive">Inactivo</option>
+                    <select id="patient-status" name="patient-status" required>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
                 

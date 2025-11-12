@@ -1,12 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    // --- CONSTANTES GLOBALES ---
     const doctorModal = document.getElementById('doctor-modal');
-    const patientModal = document.getElementById('patient-modal');
-    const closeModalButtons = document.querySelectorAll('.close-modal');
     const doctorForm = document.getElementById('doctor-form');
     const doctoresTableBody = document.getElementById('doctores-table-body');
+    
+    const patientModal = document.getElementById('patient-modal');
+    // AÑADIDOS:
+    const patientForm = document.getElementById('patient-form');
+    const pacientesTableBody = document.getElementById('pacientes-table-body');
 
-    // --- NAVEGACIÓN (Tu código original) ---
+    const closeModalButtons = document.querySelectorAll('.close-modal');
+
+    // --- NAVEGACIÓN ---
     document.querySelectorAll('.menu-item').forEach(item => {
         if (item.dataset.section) {
             item.addEventListener('click', function() {
@@ -21,16 +27,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
         });
-        document.getElementById(sectionId).classList.add('active');
+        const sectionToShow = document.getElementById(sectionId);
+        if (sectionToShow) {
+            sectionToShow.classList.add('active');
+        }
         
         const titles = {
             'dashboard': 'Dashboard', 'doctors': 'Gestión de Doctores', 'patients': 'Gestión de Pacientes',
             'appointments': 'Citas del Sistema', 'users': 'Usuarios del Sistema', 'reports': 'Reportes', 'settings': 'Configuración'
         };
         document.getElementById('section-title').textContent = titles[sectionId] || 'Dashboard';
+
+        // Cargar datos cuando se muestra la sección
+        if (sectionId === 'doctors') {
+            cargarDoctores();
+        }
+        if (sectionId === 'patients') {
+            cargarPacientes();
+        }
     }
 
-    // --- MODALES (Tu código original) ---
+    // --- MANEJO DE MODALES ---
+    
+    // Abrir modal de DOCTOR
     document.getElementById('add-doctor-btn').addEventListener('click', function() {
         document.getElementById('doctor-modal-title').textContent = 'Agregar Nuevo Doctor';
         doctorForm.reset();
@@ -38,6 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
         doctorModal.style.display = 'flex';
     });
 
+    // AÑADIDO: Abrir modal de PACIENTE
+    document.getElementById('add-patient-btn').addEventListener('click', function() {
+        document.getElementById('patient-modal-title').textContent = 'Agregar Nuevo Paciente';
+        patientForm.reset();
+        document.getElementById('patient-id').value = '';
+        patientModal.style.display = 'flex';
+    });
+
+    // Cerrar cualquier modal
     closeModalButtons.forEach(button => {
         button.addEventListener('click', function() {
             doctorModal.style.display = 'none';
@@ -45,27 +73,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Cerrar al hacer clic fuera
     window.addEventListener('click', function(event) {
         if (event.target === doctorModal) doctorModal.style.display = 'none';
         if (event.target === patientModal) patientModal.style.display = 'none';
     });
 
-    // --- LÓGICA DE DOCTORES (ACTUALIZADO) ---
+    // --- LÓGICA DE DOCTORES (Existente) ---
 
-    // 1. Cargar doctores al cargar la página
-    cargarDoctores();
+    // Cargar doctores al inicio (si dashboard es la activa)
+    if (document.getElementById('doctors').classList.contains('active')) {
+        cargarDoctores();
+    }
 
-    // 2. Función para cargar doctores desde la BD
     function cargarDoctores() {
-        // *** MODIFICADO *** (Ruta actualizada)
         fetch('php/api_doctores.php?accion=obtener_todos')
             .then(response => response.json())
             .then(data => {
-                doctoresTableBody.innerHTML = ''; // Limpiar tabla
+                doctoresTableBody.innerHTML = '';
                 if (Array.isArray(data)) {
                     data.forEach(doctor => {
                         const row = document.createElement('tr');
-                        // El backend ya devuelve 'apellido'
                         const nombreCompleto = `Dr. ${doctor.nombre} ${doctor.apellido}`;
                         const estadoClass = doctor.estado.toLowerCase() === 'activo' ? 'status-active' : 'status-inactive';
                         const estadoTexto = doctor.estado.charAt(0).toUpperCase() + doctor.estado.slice(1);
@@ -90,131 +118,229 @@ document.addEventListener('DOMContentLoaded', function() {
                         `;
                         doctoresTableBody.appendChild(row);
                     });
-                } else {
-                    console.error('La respuesta de la API no es un array:', data);
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error cargando doctores:', error));
     }
 
-    // 3. Manejar envío del formulario (Agregar y Editar)
     doctorForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const formData = new FormData(doctorForm);
-        const doctorId = formData.get('doctor-id'); // El campo oculto 'doctor-id'
-        
-        // Decidir si es 'agregar' o 'editar' basado en si el ID oculto tiene valor
+        const doctorId = formData.get('doctor-id');
         formData.append('accion', doctorId ? 'editar' : 'agregar');
 
-        // *** MODIFICADO *** (Ruta actualizada)
-        fetch('php/api_doctores.php', {
-            method: 'POST',
-            body: formData
-        })
+        fetch('php/api_doctores.php', { method: 'POST', body: formData })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
                 alert(data.message);
                 doctorModal.style.display = 'none';
-                cargarDoctores(); // Recargar la tabla
+                cargarDoctores();
             } else {
                 alert('Error: ' + data.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error en formulario doctor:', error));
     });
 
-    // 4. Manejar botones de Editar y Eliminar (usando delegación de eventos)
     doctoresTableBody.addEventListener('click', function(e) {
         const editButton = e.target.closest('.edit-doctor');
         const deleteButton = e.target.closest('.delete-doctor');
 
         if (editButton) {
-            const id = editButton.dataset.id;
-            abrirModalEditarDoctor(id);
+            abrirModalEditarDoctor(editButton.dataset.id);
         }
-
         if (deleteButton) {
-            const id = deleteButton.dataset.id;
-            eliminarDoctor(id);
+            eliminarDoctor(deleteButton.dataset.id);
         }
     });
 
-    // 5. Función para abrir modal y cargar datos para editar
     function abrirModalEditarDoctor(id) {
         const formData = new FormData();
         formData.append('accion', 'obtener_uno');
         formData.append('id', id);
 
-        // *** MODIFICADO *** (Ruta actualizada)
-        fetch('php/api_doctores.php', {
-            method: 'POST',
-            body: formData
-        })
+        fetch('php/api_doctores.php', { method: 'POST', body: formData })
         .then(response => response.json())
         .then(doctor => {
             if (doctor.status === 'error') {
-                alert(doctor.message);
-                return;
+                alert(doctor.message); return;
             }
-            // Llenar el formulario del modal con los datos del doctor
             document.getElementById('doctor-modal-title').textContent = 'Editar Doctor';
-            document.getElementById('doctor-id').value = doctor.id; // Campo oculto
+            document.getElementById('doctor-id').value = doctor.id;
             document.getElementById('doctor-firstname').value = doctor.nombre;
             document.getElementById('doctor-lastname').value = doctor.apellido;
             document.getElementById('doctor-email').value = doctor.email;
             document.getElementById('doctor-phone').value = doctor.telefono;
             document.getElementById('doctor-specialty').value = doctor.especialidad;
             document.getElementById('doctor-license').value = doctor.licencia;
-            document.getElementById('doctor-status').value = doctor.estado.toLowerCase();
+            document.getElementById('doctor-status').value = doctor.estado;
             doctorModal.style.display = 'flex';
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error obteniendo doctor:', error));
     }
 
-    // 6. Función para eliminar un doctor
     function eliminarDoctor(id) {
-        if (confirm(`¿Está seguro de que desea eliminar al doctor DOC-${id}? Esta acción también eliminará su usuario y citas asociadas.`)) {
+        if (confirm(`¿Está seguro de eliminar al doctor DOC-${id}?`)) {
             const formData = new FormData();
             formData.append('accion', 'eliminar');
             formData.append('id', id);
 
-            // *** MODIFICADO *** (Ruta actualizada)
-            fetch('php/api_doctores.php', {
-                method: 'POST',
-                body: formData
-            })
+            fetch('php/api_doctores.php', { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     alert(data.message);
-                    cargarDoctores(); // Recargar la tabla
+                    cargarDoctores();
                 } else {
                     alert('Error: ' + data.message);
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error eliminando doctor:', error));
         }
     }
 
-    // --- BÚSQUEDA Y FILTROS (Tu código original) ---
+    // --- AÑADIDO: LÓGICA DE PACIENTES ---
 
-    document.getElementById('search-doctors').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        filterTable('doctores-table-body', searchTerm); 
-    });
+    // Cargar pacientes al inicio (si dashboard es la activa)
+    if (document.getElementById('patients').classList.contains('active')) {
+        cargarPacientes();
+    }
     
+    function cargarPacientes() {
+        fetch('php/api_pacientes.php?accion=obtener_todos')
+            .then(response => response.json())
+            .then(data => {
+                pacientesTableBody.innerHTML = '';
+                if (Array.isArray(data)) {
+                    data.forEach(paciente => {
+                        const row = document.createElement('tr');
+                        const nombreCompleto = `${paciente.nombre} ${paciente.apellido}`;
+                        const estadoClass = paciente.estado.toLowerCase() === 'activo' ? 'status-active' : 'status-inactive';
+                        const estadoTexto = paciente.estado.charAt(0).toUpperCase() + paciente.estado.slice(1);
+                        const generoTexto = paciente.genero === 'M' ? 'Masculino' : 'Femenino';
+
+                        row.innerHTML = `
+                            <td>PAC-${paciente.id}</td>
+                            <td>${nombreCompleto}</td>
+                            <td>${paciente.email}</td>
+                            <td>${paciente.telefono}</td>
+                            <td>${paciente.edad}</td>
+                            <td>${generoTexto}</td>
+                            <td><span class="status-badge ${estadoClass}">${estadoTexto}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-warning edit-patient" data-id="${paciente.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-patient" data-id="${paciente.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        pacientesTableBody.appendChild(row);
+                    });
+                }
+            })
+            .catch(error => console.error('Error cargando pacientes:', error));
+    }
+
+    patientForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(patientForm);
+        const pacienteId = formData.get('patient-id');
+        formData.append('accion', pacienteId ? 'editar' : 'agregar');
+
+        fetch('php/api_pacientes.php', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                patientModal.style.display = 'none';
+                cargarPacientes();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error en formulario paciente:', error));
+    });
+
+    pacientesTableBody.addEventListener('click', function(e) {
+        const editButton = e.target.closest('.edit-patient');
+        const deleteButton = e.target.closest('.delete-patient');
+
+        if (editButton) {
+            abrirModalEditarPaciente(editButton.dataset.id);
+        }
+        if (deleteButton) {
+            eliminarPaciente(deleteButton.dataset.id);
+        }
+    });
+
+    function abrirModalEditarPaciente(id) {
+        const formData = new FormData();
+        formData.append('accion', 'obtener_uno');
+        formData.append('id', id);
+
+        fetch('php/api_pacientes.php', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(paciente => {
+            if (paciente.status === 'error') {
+                alert(paciente.message); return;
+            }
+            document.getElementById('patient-modal-title').textContent = 'Editar Paciente';
+            document.getElementById('patient-id').value = paciente.id;
+            document.getElementById('patient-firstname').value = paciente.nombre;
+            document.getElementById('patient-lastname').value = paciente.apellido;
+            document.getElementById('patient-email').value = paciente.email;
+            document.getElementById('patient-phone').value = paciente.telefono;
+            document.getElementById('patient-birthdate').value = paciente.fecha_nacimiento;
+            document.getElementById('patient-gender').value = paciente.genero;
+            document.getElementById('patient-address').value = paciente.direccion;
+            document.getElementById('patient-status').value = paciente.estado;
+            patientModal.style.display = 'flex';
+        })
+        .catch(error => console.error('Error obteniendo paciente:', error));
+    }
+
+    function eliminarPaciente(id) {
+        if (confirm(`¿Está seguro de eliminar al paciente PAC-${id}?`)) {
+            const formData = new FormData();
+            formData.append('accion', 'eliminar');
+            formData.append('id', id);
+
+            fetch('php/api_pacientes.php', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    cargarPacientes();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error eliminando paciente:', error));
+        }
+    }
+
+
+    // --- BÚSQUEDA Y FILTROS ---
+    
+    // Función de filtro genérica
     function filterTable(tbodyId, searchTerm) {
-        const table = document.getElementById(tbodyId);
-        const rows = table.getElementsByTagName('tr');
+        const tableBody = document.getElementById(tbodyId);
+        if (!tableBody) return;
+        
+        const rows = tableBody.getElementsByTagName('tr');
         
         for (let i = 0; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
             let found = false;
             
-            // Empezamos en j=1 para ignorar el ID (DOC-XXX)
-            for (let j = 1; j < cells.length - 1; j++) { // Ignoramos ID y Acciones
+            // Empezamos en j=1 para ignorar el ID (DOC-XXX / PAC-XXX)
+            // Terminamos en cells.length - 1 para ignorar la columna de 'Acciones'
+            for (let j = 1; j < cells.length - 1; j++) { 
                 const cellText = cells[j].textContent || cells[j].innerText;
                 if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
                     found = true;
@@ -224,4 +350,15 @@ document.addEventListener('DOMContentLoaded', function() {
             rows[i].style.display = found ? '' : 'none';
         }
     }
+
+    // Buscador de Doctores
+    document.getElementById('search-doctors').addEventListener('input', function() {
+        filterTable('doctores-table-body', this.value.toLowerCase());
+    });
+    
+    // AÑADIDO: Buscador de Pacientes
+    document.getElementById('search-patients').addEventListener('input', function() {
+        filterTable('pacientes-table-body', this.value.toLowerCase());
+    });
+
 });
