@@ -159,3 +159,33 @@
             e.preventDefault();
             alert('Perfil actualizado con éxito.');
         });
+
+        // Cargar pacientes desde la base de datos
+function cargarPacientes() {
+    const loadingElement = document.getElementById('loading-pacientes');
+    const container = document.getElementById('patients-list-container');
+    const noPatientsMessage = document.getElementById('no-patients-message');
+    
+    // Mostrar solo el spinner de carga
+    loadingElement.style.display = 'block';
+    container.innerHTML = '';
+    noPatientsMessage.style.display = 'none';
+    
+    fetch('../databases/get_pacientes.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarPacientes(data.pacientes);
+            } else {
+                console.error('Error:', data.error);
+                container.innerHTML = '<div class="error-message">Error al cargar pacientes</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error de conexión</div>';
+        })
+        .finally(() => {
+            loadingElement.style.display = 'none';
+        });
+}
