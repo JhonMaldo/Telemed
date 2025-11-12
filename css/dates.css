@@ -1,0 +1,35 @@
+/* Sección consulta */
+.consulta {
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #f1faff;
+}
+
+.consulta form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+  margin: auto;
+}
+
+.consulta input,
+.consulta select {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Confirmación de cita */
+.cita-confirmada {
+  margin-top: 2rem;
+  background: #e0f7e9;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #5cb85c;
+}
+
+.cita-confirmada h3 {
+  color: #2e7d32;
+}

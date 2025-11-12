@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Doctor - Sistema Médico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --sidebar-width: 250px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .menu-item:hover {
+            background-color: #34495e;
+        }
+        
+        .menu-item.active {
+            background-color: var(--primary-color);
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header h1 {
+            color: var(--secondary-color);
+            font-size: 24px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #ddd;
+        }
+        
+        .notification-badge {
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Dashboard */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .card p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        /* Appointments */
+        .appointments-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .appointment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .appointment-info h4 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .appointment-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Patient List */
+        .patients-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .patient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .patient-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .patient-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #ddd;
+        }
+        
+        .patient-details h4 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .patient-details p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        /* Medical Records */
+        .records-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .records-sidebar {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .records-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .record-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .record-item:hover {
+            background-color: #e1f0fa;
+        }
+        
+        .record-item.active {
+            background-color: #cce5ff;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        /* Notifications */
+        .notifications-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .notification-item.unread {
+            background-color: #e1f0fa;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-content h4 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .notification-content p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .notification-time {
+            color: #95a5a6;
+            font-size: 12px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+            }
+            
+            .sidebar-header h2, .sidebar-header p, .menu-item span {
+                display: none;
+            }
+            
+            .menu-item {
+                justify-content: center;
+            }
+            
+            .menu-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .records-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .appointment-item, .patient-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .appointment-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Panel de Doctor</h2>
+            <p>Bienvenido, Dr. Martínez</p>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-section="patients">
+                <i class="fas fa-user-injured"></i>
+                <span>Mis Pacientes</span>
+            </div>
+            <div class="menu-item" data-section="consultations">
+                <i class="fas fa-stethoscope"></i>
+                <span>Consultas</span>
+            </div>
+            <div class="menu-item" data-section="medical-records">
+                <i class="fas fa-notes-medical"></i>
+                <span>Expedientes</span>
+            </div>
+            <div class="menu-item" data-section="prescriptions">
+                <i class="fas fa-file-prescription"></i>
+                <span>Recetas</span>
+            </div>
+            <div class="menu-item" data-section="notifications">
+                <i class="fas fa-bell"></i>
+                <span>Notificaciones</span>
+                <div class="notification-badge">3</div>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 id="section-title">Dashboard</h1>
+            <div class="user-info">
+                <img src="#" alt="Doctor">
+                <div>
+                    <div>Dr. Laura Martínez</div>
+                    <small>Cardióloga</small>
+                </div>
+                <div class="notification-badge">3</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+
+            <h2 class="section-title">Citas del Día</h2>
+            <div class="appointments-list">
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>Juan Pérez - Control Cardiológico</h4>
+                        <p><i class="far fa-clock"></i> 9:00 AM - 9:30 AM</p>
+                        <p><i class="fas fa-info-circle"></i> Seguimiento post-tratamiento</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Iniciar Consulta</button>
+                        <button class="btn">Ver Expediente</button>
+                    </div>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>María González - Consulta General</h4>
+                        <p><i class="far fa-clock"></i> 10:15 AM - 10:45 AM</p>
+                        <p><i class="fas fa-info-circle"></i> Dolor torácico leve</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Iniciar Consulta</button>
+                        <button class="btn">Ver Expediente</button>
+                    </div>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>Carlos Rodríguez - Primera Vez</h4>
+                        <p><i class="far fa-clock"></i> 11:30 AM - 12:00 PM</p>
+                        <p><i class="fas fa-info-circle"></i> Evaluación cardiológica inicial</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Iniciar Consulta</button>
+                        <button class="btn">Ver Expediente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Section -->
+        <div id="appointments" class="content-section">
+            <h2 class="section-title">Mis Citas Programadas</h2>
+            <div class="appointments-list">
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>Juan Pérez - Control Cardiológico</h4>
+                        <p><i class="far fa-calendar"></i> 15 Oct, 2023 - 9:00 AM</p>
+                        <p><i class="fas fa-info-circle"></i> Seguimiento post-tratamiento</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Confirmar</button>
+                        <button class="btn btn-warning">Reagendar</button>
+                        <button class="btn">Cancelar</button>
+                    </div>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>Ana López - Evaluación Cardiológica</h4>
+                        <p><i class="far fa-calendar"></i> 16 Oct, 2023 - 10:30 AM</p>
+                        <p><i class="fas fa-info-circle"></i> Primera consulta, antecedentes familiares</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Confirmar</button>
+                        <button class="btn btn-warning">Reagendar</button>
+                        <button class="btn">Cancelar</button>
+                    </div>
+                </div>
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>Roberto Sánchez - Control de Medicación</h4>
+                        <p><i class="far fa-calendar"></i> 17 Oct, 2023 - 11:15 AM</p>
+                        <p><i class="fas fa-info-circle"></i> Ajuste de dosis de anticoagulantes</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-success">Confirmar</button>
+                        <button class="btn btn-warning">Reagendar</button>
+                        <button class="btn">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patients Section -->
+        <div id="patients" class="content-section">
+            <h2 class="section-title">Mis Pacientes</h2>
+            <div class="patients-list">
+                <div class="patient-item">
+                    <div class="patient-info">
+                        <img src="#" alt="Paciente">
+                        <div class="patient-details">
+                            <h4>Juan Pérez</h4>
+                            <p><i class="fas fa-birthday-cake"></i> 45 años</p>
+                            <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                            <p><i class="fas fa-stethoscope"></i> Hipertensión arterial</p>
+                        </div>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn">Ver Expediente</button>
+                        <button class="btn btn-success">Agendar Cita</button>
+                    </div>
+                </div>
+                <div class="patient-item">
+                    <div class="patient-info">
+                        <img src="#" alt="Paciente">
+                        <div class="patient-details">
+                            <h4>María González</h4>
+                            <p><i class="fas fa-birthday-cake"></i> 52 años</p>
+                            <p><i class="fas fa-phone"></i> +57 301 234 5678</p>
+                            <p><i class="fas fa-stethoscope"></i> Cardiopatía isquémica</p>
+                        </div>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn">Ver Expediente</button>
+                        <button class="btn btn-success">Agendar Cita</button>
+                    </div>
+                </div>
+                <div class="patient-item">
+                    <div class="patient-info">
+                        <img src="#" alt="Paciente">
+                        <div class="patient-details">
+                            <h4>Carlos Rodríguez</h4>
+                            <p><i class="fas fa-birthday-cake"></i> 38 años</p>
+                            <p><i class="fas fa-phone"></i> +57 302 345 6789</p>
+                            <p><i class="fas fa-stethoscope"></i> Arritmia cardíaca</p>
+                        </div>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn">Ver Expediente</button>
+                        <button class="btn btn-success">Agendar Cita</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultations Section -->
+        <div id="consultations" class="content-section">
+            <h2 class="section-title">Consultas y Videollamadas</h2>
+            
+            <div class="dashboard-cards">
+                <div class="card">
+                    <i class="fas fa-video"></i>
+                    <h3>Consultas Programadas</h3>
+                    <p>5 consultas virtuales esta semana</p>
+                    <button class="btn" style="margin-top: 15px;">Ver Todas</button>
+                </div>
+                <div class="card">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h3>Agendar Consulta</h3>
+                    <p>Programar nueva consulta con paciente</p>
+                    <button class="btn" style="margin-top: 15px;">Nueva Consulta</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Medical Records Section -->
+        <div id="medical-records" class="content-section">
+            <h2 class="section-title">Expedientes Médicos</h2>
+            
+            <div class="records-container">
+                <div class="records-sidebar">
+                    <h3>Pacientes</h3>
+                    <div class="record-item active" data-patient="1">
+                        <h4>Juan Pérez</h4>
+                        <p>45 años · Hipertensión</p>
+                    </div>
+                    <div class="record-item" data-patient="2">
+                        <h4>María González</h4>
+                        <p>52 años · Cardiopatía</p>
+                    </div>
+                    <div class="record-item" data-patient="3">
+                        <h4>Carlos Rodríguez</h4>
+                        <p>38 años · Arritmia</p>
+                    </div>
+                    <div class="record-item" data-patient="4">
+                        <h4>Ana López</h4>
+                        <p>61 años · Diabetes</p>
+                    </div>
+                </div>
+                
+                <div class="records-content">
+                    <h3>Expediente de Juan Pérez</h3>
+                    <div class="form-group">
+                        <label for="patient-history">Historial Médico</label>
+                        <textarea id="patient-history" rows="6">Paciente con diagnóstico de hipertensión arterial desde 2018. Control regular con medicación. Última consulta: 15/09/2023 - PA: 130/85 mmHg. Sin eventos adversos recientes.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="current-medication">Medicación Actual</label>
+                        <textarea id="current-medication" rows="4">- Losartán 50 mg: 1 tableta cada 24 horas
+- Atorvastatina 20 mg: 1 tableta cada 24 horas
+- Ácido acetilsalicílico 100 mg: 1 tableta cada 24 horas</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="allergies">Alergias</label>
+                        <input type="text" id="allergies" value="Penicilina (rash cutáneo)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="next-appointment">Próxima Cita</label>
+                        <input type="date" id="next-appointment" value="2023-11-15">
+                    </div>
+                    
+                    <button class="btn">Actualizar Expediente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescriptions Section -->
+        <div id="prescriptions" class="content-section">
+            <h2 class="section-title">Gestión de Recetas Médicas</h2>
+            
+            <div class="dashboard-cards">
+                <div class="card">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Nueva Receta</h3>
+                    <p>Crear nueva receta médica</p>
+                    <button class="btn" style="margin-top: 15px;">Crear Receta</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notifications" class="content-section">
+            <h2 class="section-title">Notificaciones</h2>
+            
+            <div class="notifications-list">
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Nueva Cita Programada</h4>
+                        <p>Ana López ha agendado una cita para el 18 de octubre a las 11:00 AM</p>
+                        <p class="notification-time">Hace 2 horas</p>
+                    </div>
+                </div>
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Resultados de Laboratorio Disponibles</h4>
+                        <p>Los resultados de Juan Pérez están disponibles para revisión</p>
+                        <p class="notification-time">Hace 5 horas</p>
+                    </div>
+                </div>
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-prescription-bottle-alt"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Solicitud de Receta</h4>
+                        <p>María González ha solicitado la renovación de su medicación</p>
+                        <p class="notification-time">Ayer, 14:30</p>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Recordatorio de Cita</h4>
+                        <p>Tienes una cita con Carlos Rodríguez mañana a las 10:00 AM</p>
+                        <p class="notification-time">Ayer, 09:15</p>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Videoconsulta Programada</h4>
+                        <p>Videoconsulta con Roberto Sánchez confirmada para el 17 de octubre</p>
+                        <p class="notification-time">15 Oct, 2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            if (item.dataset.section) {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    showSection(this.dataset.section);
+                });
+            }
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update section title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'patients': 'Mis Pacientes',
+                'consultations': 'Consultas',
+                'medical-records': 'Expedientes Médicos',
+                'prescriptions': 'Recetas Médicas',
+                'notifications': 'Notificaciones'
+            };
+            
+            document.getElementById('section-title').textContent = titles[sectionId] || 'Dashboard';
+        }
+
+        // Medical Records - Patient Selection
+        document.querySelectorAll('.record-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.record-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // In a real application, this would load the patient's records
+                const patientName = this.querySelector('h4').textContent;
+                document.querySelector('.records-content h3').textContent = `Expediente de ${patientName}`;
+            });
+        });
+
+        // Notifications - Mark as read
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.remove('unread');
+                
+                // Update notification badge
+                const badge = document.querySelector('.notification-badge');
+                let count = parseInt(badge.textContent);
+                if (count > 0) {
+                    count--;
+                    badge.textContent = count;
+                }
+            });
+        });
+
+        // Form submissions
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Perfil actualizado correctamente');
+        });
+
+        // Sample data for demonstration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date for next appointment
+            const nextAppointment = document.getElementById('next-appointment');
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            nextAppointment.valueAsDate = nextMonth;
+        });
+    </script>
+</body>
+</html>

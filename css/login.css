@@ -1,0 +1,86 @@
+body.login-body {
+  background: linear-gradient(135deg, #38c6c6 0%, #4f8cff 100%);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: #fff;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 0.5rem;
+  color: #2d5fa7;
+}
+
+.login-card p {
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input {
+  padding: 0.7rem;
+  border: 1px solid #bcdffb;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #38c6c6;
+}
+
+.btn-primary {
+  background: #38c6c6;
+  color: #fff;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2d5fa7;
+}
+
+#error-msg {
+  color: #e74c3c;
+  font-size: 0.98rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.login-links {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.login-links a {
+  color: #38c6c6;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.login-links a:hover {
+  color: #2d5fa7;
+}

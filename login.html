@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Médico - Inicio de Sesión</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --admin-color: #9b59b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .form-container {
+            padding: 30px;
+            transition: transform 0.5s ease;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h1 {
+            color: var(--secondary-color);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .user-type-selector {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .user-type {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .user-type.active[data-type="patient"] {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .user-type.active[data-type="doctor"] {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .user-type.active[data-type="admin"] {
+            background-color: var(--admin-color);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .error-message {
+            color: var(--accent-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            color: var(--success-color);
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .password-requirements {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .admin-info {
+            background-color: #f8f5ff;
+            border-left: 4px solid var(--admin-color);
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #7b5e9b;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .user-type {
+                font-size: 12px;
+                padding: 8px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <!-- Selector de tipo de usuario -->
+            <div class="user-type-selector">
+                <div class="user-type active" data-type="patient">Paciente</div>
+                <div class="user-type" data-type="doctor">Doctor</div>
+                <div class="user-type" data-type="admin">Administrador</div>
+            </div>
+            
+            <!-- Formulario de Inicio de Sesión -->
+            <div id="login-section" class="form-section active">
+                <div class="form-header">
+                    <h1 id="login-title">Iniciar Sesión</h1>
+                    <p id="login-subtitle">Accede a tu cuenta</p>
+                </div>
+                
+                <!-- Información para administradores -->
+                <div id="admin-login-info" class="admin-info hidden">
+                    <strong>Acceso administrativo:</strong> Solo personal autorizado puede acceder al panel de administración.
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Correo Electrónico</label>
+                        <input type="email" id="login-email" required>
+                        <div class="error-message" id="login-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" required>
+                        <div class="error-message" id="login-password-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="login-button">Iniciar Sesión</button>
+                </form>
+                
+                <div class="form-footer">
+                    <a href="#" id="show-register">Crear una cuenta</a>
+                    <a href="#" id="show-forgot">¿Olvidaste tu contraseña?</a>
+                </div>
+            </div>
+            
+            <!-- Formulario de Registro -->
+            <div id="register-section" class="form-section">
+                <div class="form-header">
+                    <h1 id="register-title">Registrarse</h1>
+                    <p id="register-subtitle">Crea una nueva cuenta</p>
+                </div>
+                
+                <!-- Información para administradores -->
+                <div id="admin-register-info" class="admin-info hidden">
+                    <strong>Registro de administradores:</strong> Solo usuarios con permisos especiales pueden crear cuentas de administrador.
+                </div>
+                
+                <!-- Formulario de Registro para Pacientes -->
+                <form id="patient-register-form">
+                    <div class="form-group">
+                        <label for="patient-name">Nombre Completo</label>
+                        <input type="text" id="patient-name" required>
+                        <div class="error-message" id="patient-name-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-email">Correo Electrónico</label>
+                        <input type="email" id="patient-email" required>
+                        <div class="error-message" id="patient-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-phone">Teléfono</label>
+                        <input type="tel" id="patient-phone" required>
+                        <div class="error-message" id="patient-phone-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-birthdate">Fecha de Nacimiento</label>
+                        <input type="date" id="patient-birthdate" required>
+                        <div class="error-message" id="patient-birthdate-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-gender">Género</label>
+                        <select id="patient-gender" required>
+                            <option value="">Selecciona</option>
+                            <option value="male">Masculino</option>
+                            <option value="female">Femenino</option>
+                            <option value="other">Otro</option>
+                        </select>
+                        <div class="error-message" id="patient-gender-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-password">Contraseña</label>
+                        <input type="password" id="patient-password" required>
+                        <div class="error-message" id="patient-password-error"></div>
+                        <div class="password-requirements">
+                            La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-confirm-password">Confirmar Contraseña</label>
+                        <input type="password" id="patient-confirm-password" required>
+                        <div class="error-message" id="patient-confirm-password-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Registrarse</button>
+                </form>
+                
+                <!-- Formulario de Registro para Doctores -->
+                <form id="doctor-register-form" class="hidden">
+                    <div class="form-group">
+                        <label for="doctor-name">Nombre Completo</label>
+                        <input type="text" id="doctor-name" required>
+                        <div class="error-message" id="doctor-name-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-email">Correo Electrónico</label>
+                        <input type="email" id="doctor-email" required>
+                        <div class="error-message" id="doctor-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-phone">Teléfono</label>
+                        <input type="tel" id="doctor-phone" required>
+                        <div class="error-message" id="doctor-phone-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-specialty">Especialidad</label>
+                        <input type="text" id="doctor-specialty" required>
+                        <div class="error-message" id="doctor-specialty-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-license">Número de Licencia</label>
+                        <input type="text" id="doctor-license" required>
+                        <div class="error-message" id="doctor-license-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-hospital">Hospital/Clínica</label>
+                        <input type="text" id="doctor-hospital" required>
+                        <div class="error-message" id="doctor-hospital-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-password">Contraseña</label>
+                        <input type="password" id="doctor-password" required>
+                        <div class="error-message" id="doctor-password-error"></div>
+                        <div class="password-requirements">
+                            La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-confirm-password">Confirmar Contraseña</label>
+                        <input type="password" id="doctor-confirm-password" required>
+                        <div class="error-message" id="doctor-confirm-password-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Registrarse</button>
+                </form>
+                
+                <!-- Formulario de Registro para Administradores -->
+                <form id="admin-register-form" class="hidden">
+                    <div class="admin-info">
+                        <strong>Importante:</strong> Las cuentas de administrador requieren verificación especial. 
+                        Solo el personal autorizado puede crear estas cuentas.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-name">Nombre Completo</label>
+                        <input type="text" id="admin-name" required>
+                        <div class="error-message" id="admin-name-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-email">Correo Electrónico</label>
+                        <input type="email" id="admin-email" required>
+                        <div class="error-message" id="admin-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-phone">Teléfono</label>
+                        <input type="tel" id="admin-phone" required>
+                        <div class="error-message" id="admin-phone-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-department">Departamento</label>
+                        <select id="admin-department" required>
+                            <option value="">Selecciona departamento</option>
+                            <option value="sistemas">Sistemas</option>
+                            <option value="administracion">Administración</option>
+                            <option value="recursos-humanos">Recursos Humanos</option>
+                            <option value="gerencia">Gerencia</option>
+                            <option value="calidad">Calidad</option>
+                        </select>
+                        <div class="error-message" id="admin-department-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-code">Código de Verificación</label>
+                        <input type="text" id="admin-code" required placeholder="Código especial para administradores">
+                        <div class="error-message" id="admin-code-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-password">Contraseña</label>
+                        <input type="password" id="admin-password" required>
+                        <div class="error-message" id="admin-password-error"></div>
+                        <div class="password-requirements">
+                            La contraseña debe tener al menos 10 caracteres, incluyendo una mayúscula, un número y un carácter especial.
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-confirm-password">Confirmar Contraseña</label>
+                        <input type="password" id="admin-confirm-password" required>
+                        <div class="error-message" id="admin-confirm-password-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Solicitar Registro</button>
+                </form>
+                
+                <div class="form-footer">
+                    <a href="#" id="show-login">¿Ya tienes una cuenta? Inicia sesión</a>
+                </div>
+            </div>
+            
+            <!-- Formulario de Recuperación de Contraseña -->
+            <div id="forgot-section" class="form-section">
+                <div class="form-header">
+                    <h1>Recuperar Contraseña</h1>
+                    <p>Ingresa tu correo para recuperar tu contraseña</p>
+                </div>
+                
+                <form id="forgot-form">
+                    <div class="form-group">
+                        <label for="forgot-email">Correo Electrónico</label>
+                        <input type="email" id="forgot-email" required>
+                        <div class="error-message" id="forgot-email-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Enviar Instrucciones</button>
+                </form>
+                
+                <div class="success-message" id="forgot-success">
+                    Se han enviado las instrucciones para recuperar tu contraseña a tu correo electrónico.
+                </div>
+                
+                <div class="form-footer">
+                    <a href="#" id="show-login-from-forgot">Volver al inicio de sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const userTypeSelector = document.querySelectorAll('.user-type');
+        const formSections = document.querySelectorAll('.form-section');
+        const patientRegisterForm = document.getElementById('patient-register-form');
+        const doctorRegisterForm = document.getElementById('doctor-register-form');
+        const adminRegisterForm = document.getElementById('admin-register-form');
+        const adminLoginInfo = document.getElementById('admin-login-info');
+        const adminRegisterInfo = document.getElementById('admin-register-info');
+        const loginTitle = document.getElementById('login-title');
+        const loginSubtitle = document.getElementById('login-subtitle');
+        const registerTitle = document.getElementById('register-title');
+        const registerSubtitle = document.getElementById('register-subtitle');
+        const loginButton = document.getElementById('login-button');
+        
+        // Mostrar/ocultar secciones
+        document.getElementById('show-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('register-section');
+            updateRegisterForm();
+        });
+        
+        document.getElementById('show-forgot').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('forgot-section');
+        });
+        
+        document.getElementById('show-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('login-section');
+            updateLoginUI();
+        });
+        
+        document.getElementById('show-login-from-forgot').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('login-section');
+            updateLoginUI();
+        });
+        
+        // Cambiar tipo de usuario
+        userTypeSelector.forEach(type => {
+            type.addEventListener('click', function() {
+                userTypeSelector.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Actualizar la interfaz según el tipo de usuario
+                updateLoginUI();
+                
+                // Si estamos en la sección de registro, actualizar el formulario
+                if (document.getElementById('register-section').classList.contains('active')) {
+                    updateRegisterForm();
+                }
+            });
+        });
+        
+        // Función para mostrar sección
+        function showSection(sectionId) {
+            formSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Actualizar la interfaz según el tipo de usuario
+            if (sectionId === 'login-section') {
+                updateLoginUI();
+            }
+        }
+        
+        // Actualizar formulario de registro según el tipo de usuario
+        function updateRegisterForm() {
+            const activeType = document.querySelector('.user-type.active').getAttribute('data-type');
+            
+            // Ocultar todos los formularios primero
+            patientRegisterForm.classList.add('hidden');
+            doctorRegisterForm.classList.add('hidden');
+            adminRegisterForm.classList.add('hidden');
+            adminRegisterInfo.classList.add('hidden');
+            
+            // Mostrar el formulario correspondiente
+            if (activeType === 'patient') {
+                patientRegisterForm.classList.remove('hidden');
+                registerTitle.textContent = 'Registrarse como Paciente';
+                registerSubtitle.textContent = 'Crea una nueva cuenta de paciente';
+            } else if (activeType === 'doctor') {
+                doctorRegisterForm.classList.remove('hidden');
+                registerTitle.textContent = 'Registrarse como Doctor';
+                registerSubtitle.textContent = 'Crea una nueva cuenta de doctor';
+            } else if (activeType === 'admin') {
+                adminRegisterForm.classList.remove('hidden');
+                adminRegisterInfo.classList.remove('hidden');
+                registerTitle.textContent = 'Registro de Administrador';
+                registerSubtitle.textContent = 'Solicitar cuenta de administrador';
+            }
+        }
+        
+        // Actualizar la interfaz de login según el tipo de usuario
+        function updateLoginUI() {
+            const activeType = document.querySelector('.user-type.active').getAttribute('data-type');
+            
+            if (activeType === 'patient') {
+                loginTitle.textContent = 'Iniciar Sesión como Paciente';
+                loginSubtitle.textContent = 'Accede a tu cuenta de paciente';
+                loginButton.textContent = 'Iniciar Sesión';
+                adminLoginInfo.classList.add('hidden');
+            } else if (activeType === 'doctor') {
+                loginTitle.textContent = 'Iniciar Sesión como Doctor';
+                loginSubtitle.textContent = 'Accede a tu cuenta de doctor';
+                loginButton.textContent = 'Iniciar Sesión';
+                adminLoginInfo.classList.add('hidden');
+            } else if (activeType === 'admin') {
+                loginTitle.textContent = 'Acceso de Administrador';
+                loginSubtitle.textContent = 'Panel de control del sistema';
+                loginButton.textContent = 'Acceder al Panel Admin';
+                adminLoginInfo.classList.remove('hidden');
+            }
+        }
+        
+        // Validación de formularios
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateLoginForm()) {
+                const activeType = document.querySelector('.user-type.active').getAttribute('data-type');
+                
+                // Redirigir según el tipo de usuario
+                if (activeType === 'patient') {
+                    window.location.href = 'paciente.html';
+                } else if (activeType === 'doctor') {
+                    window.location.href = 'doctor.html';
+                } else if (activeType === 'admin') {
+                    window.location.href = 'admin.html';
+                }
+            }
+        });
+        
+        document.getElementById('patient-register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validatePatientRegisterForm()) {
+                // Aquí iría la lógica para enviar los datos al servidor
+                alert('Registro de paciente exitoso (simulación)');
+                window.location.href = 'paciente.html';
+            }
+        });
+        
+        document.getElementById('doctor-register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateDoctorRegisterForm()) {
+                // Aquí iría la lógica para enviar los datos al servidor
+                alert('Registro de doctor exitoso (simulación)');
+                window.location.href = 'doctor.html';
+            }
+        });
+        
+        document.getElementById('admin-register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateAdminRegisterForm()) {
+                // Aquí iría la lógica para enviar los datos al servidor
+                alert('Solicitud de registro de administrador enviada (simulación)');
+                window.location.href = 'login.html';
+            }
+        });
+        
+        document.getElementById('forgot-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForgotForm()) {
+                document.getElementById('forgot-success').style.display = 'block';
+                // Aquí iría la lógica para enviar el correo de recuperación
+            }
+        });
+        
+        // Funciones de validación
+        function validateLoginForm() {
+            let isValid = true;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validar email
+            if (!validateEmail(email)) {
+                showError('login-email-error', 'Por favor ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                hideError('login-email-error');
+            }
+            
+            // Validar contraseña
+            if (password.length < 6) {
+                showError('login-password-error', 'La contraseña debe tener al menos 6 caracteres');
+                isValid = false;
+            } else {
+                hideError('login-password-error');
+            }
+            
+            return isValid;
+        }
+        
+        function validatePatientRegisterForm() {
+            let isValid = true;
+            
+            // Validar nombre
+            const name = document.getElementById('patient-name').value;
+            if (name.trim().length < 2) {
+                showError('patient-name-error', 'El nombre debe tener al menos 2 caracteres');
+                isValid = false;
+            } else {
+                hideError('patient-name-error');
+            }
+            
+            // Validar email
+            const email = document.getElementById('patient-email').value;
+            if (!validateEmail(email)) {
+                showError('patient-email-error', 'Por favor ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                hideError('patient-email-error');
+            }
+            
+            // Validar teléfono
+            const phone = document.getElementById('patient-phone').value;
+            if (!validatePhone(phone)) {
+                showError('patient-phone-error', 'Por favor ingresa un número de teléfono válido');
+                isValid = false;
+            } else {
+                hideError('patient-phone-error');
+            }
+            
+            // Validar fecha de nacimiento
+            const birthdate = document.getElementById('patient-birthdate').value;
+            if (!birthdate) {
+                showError('patient-birthdate-error', 'Por favor ingresa tu fecha de nacimiento');
+                isValid = false;
+            } else {
+                hideError('patient-birthdate-error');
+            }
+            
+            // Validar género
+            const gender = document.getElementById('patient-gender').value;
+            if (!gender) {
+                showError('patient-gender-error', 'Por favor selecciona tu género');
+                isValid = false;
+            } else {
+                hideError('patient-gender-error');
+            }
+            
+            // Validar contraseña
+            const password = document.getElementById('patient-password').value;
+            if (!validatePassword(password)) {
+                showError('patient-password-error', 'La contraseña no cumple con los requisitos');
+                isValid = false;
+            } else {
+                hideError('patient-password-error');
+            }
+            
+            // Validar confirmación de contraseña
+            const confirmPassword = document.getElementById('patient-confirm-password').value;
+            if (password !== confirmPassword) {
+                showError('patient-confirm-password-error', 'Las contraseñas no coinciden');
+                isValid = false;
+            } else {
+                hideError('patient-confirm-password-error');
+            }
+            
+            return isValid;
+        }
+        
+        function validateDoctorRegisterForm() {
+            let isValid = true;
+            
+            // Validar nombre
+            const name = document.getElementById('doctor-name').value;
+            if (name.trim().length < 2) {
+                showError('doctor-name-error', 'El nombre debe tener al menos 2 caracteres');
+                isValid = false;
+            } else {
+                hideError('doctor-name-error');
+            }
+            
+            // Validar email
+            const email = document.getElementById('doctor-email').value;
+            if (!validateEmail(email)) {
+                showError('doctor-email-error', 'Por favor ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                hideError('doctor-email-error');
+            }
+            
+            // Validar teléfono
+            const phone = document.getElementById('doctor-phone').value;
+            if (!validatePhone(phone)) {
+                showError('doctor-phone-error', 'Por favor ingresa un número de teléfono válido');
+                isValid = false;
+            } else {
+                hideError('doctor-phone-error');
+            }
+            
+            // Validar especialidad
+            const specialty = document.getElementById('doctor-specialty').value;
+            if (!specialty.trim()) {
+                showError('doctor-specialty-error', 'Por favor ingresa tu especialidad');
+                isValid = false;
+            } else {
+                hideError('doctor-specialty-error');
+            }
+            
+            // Validar licencia
+            const license = document.getElementById('doctor-license').value;
+            if (!license.trim()) {
+                showError('doctor-license-error', 'Por favor ingresa tu número de licencia');
+                isValid = false;
+            } else {
+                hideError('doctor-license-error');
+            }
+            
+            // Validar hospital/clínica
+            const hospital = document.getElementById('doctor-hospital').value;
+            if (!hospital.trim()) {
+                showError('doctor-hospital-error', 'Por favor ingresa tu hospital o clínica');
+                isValid = false;
+            } else {
+                hideError('doctor-hospital-error');
+            }
+            
+            // Validar contraseña
+            const password = document.getElementById('doctor-password').value;
+            if (!validatePassword(password)) {
+                showError('doctor-password-error', 'La contraseña no cumple con los requisitos');
+                isValid = false;
+            } else {
+                hideError('doctor-password-error');
+            }
+            
+            // Validar confirmación de contraseña
+            const confirmPassword = document.getElementById('doctor-confirm-password').value;
+            if (password !== confirmPassword) {
+                showError('doctor-confirm-password-error', 'Las contraseñas no coinciden');
+                isValid = false;
+            } else {
+                hideError('doctor-confirm-password-error');
+            }
+            
+            return isValid;
+        }
+        
+        function validateAdminRegisterForm() {
+            let isValid = true;
+            
+            // Validar nombre
+            const name = document.getElementById('admin-name').value;
+            if (name.trim().length < 2) {
+                showError('admin-name-error', 'El nombre debe tener al menos 2 caracteres');
+                isValid = false;
+            } else {
+                hideError('admin-name-error');
+            }
+            
+            // Validar email
+            const email = document.getElementById('admin-email').value;
+            if (!validateEmail(email)) {
+                showError('admin-email-error', 'Por favor ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                hideError('admin-email-error');
+            }
+            
+            // Validar teléfono
+            const phone = document.getElementById('admin-phone').value;
+            if (!validatePhone(phone)) {
+                showError('admin-phone-error', 'Por favor ingresa un número de teléfono válido');
+                isValid = false;
+            } else {
+                hideError('admin-phone-error');
+            }
+            
+            // Validar departamento
+            const department = document.getElementById('admin-department').value;
+            if (!department) {
+                showError('admin-department-error', 'Por favor selecciona tu departamento');
+                isValid = false;
+            } else {
+                hideError('admin-department-error');
+            }
+            
+            // Validar código de verificación
+            const code = document.getElementById('admin-code').value;
+            if (!code.trim()) {
+                showError('admin-code-error', 'Por favor ingresa el código de verificación');
+                isValid = false;
+            } else {
+                hideError('admin-code-error');
+            }
+            
+            // Validar contraseña (más estricta para administradores)
+            const password = document.getElementById('admin-password').value;
+            if (!validateAdminPassword(password)) {
+                showError('admin-password-error', 'La contraseña debe tener al menos 10 caracteres, incluyendo una mayúscula, un número y un carácter especial');
+                isValid = false;
+            } else {
+                hideError('admin-password-error');
+            }
+            
+            // Validar confirmación de contraseña
+            const confirmPassword = document.getElementById('admin-confirm-password').value;
+            if (password !== confirmPassword) {
+                showError('admin-confirm-password-error', 'Las contraseñas no coinciden');
+                isValid = false;
+            } else {
+                hideError('admin-confirm-password-error');
+            }
+            
+            return isValid;
+        }
+        
+        function validateForgotForm() {
+            let isValid = true;
+            const email = document.getElementById('forgot-email').value;
+            
+            if (!validateEmail(email)) {
+                showError('forgot-email-error', 'Por favor ingresa un correo electrónico válido');
+                isValid = false;
+            } else {
+                hideError('forgot-email-error');
+            }
+            
+            return isValid;
+        }
+        
+        // Funciones auxiliares de validación
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePhone(phone) {
+            const re = /^[0-9+\-\s()]{10,}$/;
+            return re.test(phone);
+        }
+        
+        function validatePassword(password) {
+            // Al menos 8 caracteres, una mayúscula, un número y un carácter especial
+            const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return re.test(password);
+        }
+        
+        function validateAdminPassword(password) {
+            // Al menos 10 caracteres, una mayúscula, un número y un carácter especial (más estricto)
+            const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
+            return re.test(password);
+        }
+        
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.style.display = 'none';
+        }
+        
+        // Inicializar la interfaz
+        updateLoginUI();
+    </script>
+</body>
+</html>

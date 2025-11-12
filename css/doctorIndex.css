@@ -1,0 +1,281 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+/* Header */
+header {
+  background: #0077b6;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  align-items: center;
+  position: sticky;
+  top: 0;
+}
+
+header .logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+nav a {
+  margin: 0 1rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.btn-login {
+  background: #fff;
+  color: #0077b6;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: linear-gradient(to right, #0077b6, #00b4d8);
+  color: white;
+}
+
+/* Panel de citas */
+#lista-citas {
+  background: #f1faff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  max-width: 500px;
+  margin: 1rem auto;
+  text-align: left;
+}
+
+.cita-card {
+  background: #fff;
+  border: 1px solid #0077b6;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cita-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0077b6;
+}
+
+/* Recetas */
+.recetas {
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #fff;
+}
+
+.receta-menu {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.receta-card {
+  background: #f8faff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 260px;
+  text-align: left;
+  transition: transform 0.2s;
+}
+
+.receta-card:hover {
+  transform: scale(1.03);
+}
+
+.receta-card h3 {
+  color: #0077b6;
+  margin-bottom: 0.8rem;
+}
+
+.receta-card p {
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+}
+
+.btn-receta, .btn-primary {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.7rem;
+  background: #0096c7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-receta:hover, .btn-primary:hover {
+  background: #0077b6;
+}
+
+/* Chat */
+.chat {
+  background: #e9f5ff;
+  padding: 3rem 2rem;
+}
+
+.chat-box {
+  background: white;
+  height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin: 0.5rem 0;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.message.user {
+  background: #0077b6;
+  color: white;
+  align-self: flex-end;
+}
+
+.message.bot {
+  background: #f1f1f1;
+  color: #333;
+  align-self: flex-start;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.chat-input button {
+  padding: 0.7rem 1rem;
+  background: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Panel de administración */
+.admin {
+  padding: 3rem 2rem;
+  background: #f1faff;
+  text-align: center;
+}
+
+.admin h2 {
+  color: #0077b6;
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: #0077b6;
+  color: white;
+  margin-top: 2rem;
+}
+
+/* Pacientes */
+.pacientes {
+  padding: 3rem 2rem;
+  background: #f1faff;
+  text-align: center;
+}
+
+.pacientes-table-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.pacientes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: auto;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.pacientes-table th, .pacientes-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.pacientes-table th {
+  background: #0077b6;
+  color: #fff;
+}
+
+.pacientes-table tr:hover {
+  background: #e9f5ff;
+}
+
+.btn-detalle {
+  background: #0096c7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn-detalle:hover {
+  background: #0077b6;
+}
+
+/* Modal estilos */
+.modal-paciente {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+}
+
+.modal-content-paciente {
+  background: white;
+  margin: 8% auto;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 350px;
+  text-align: left;
+  position: relative;
+}
+
+.close-paciente {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #0077b6;
+}
