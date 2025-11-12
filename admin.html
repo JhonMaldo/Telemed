@@ -307,44 +307,46 @@
         <div id="settings" class="content-section">
             <h2 class="section-title">Configuración del Sistema</h2>
             
-            <div class="form-group">
-                <label for="clinic-name">Nombre de la Clínica</label>
-                <input type="text" id="clinic-name" value="Clínica Médica Especializada">
-            </div>
-            
-            <div class="form-group">
-                <label for="clinic-address">Dirección</label>
-                <input type="text" id="clinic-address" value="Calle 123 #45-67, Bogotá">
-            </div>
-            
-            <div class="form-group">
-                <label for="clinic-phone">Teléfono</label>
-                <input type="text" id="clinic-phone" value="+57 1 234 5678">
-            </div>
-            
-            <div class="form-group">
-                <label for="clinic-email">Email</label>
-                <input type="email" id="clinic-email" value="info@clinica.com">
-            </div>
-            
-            <div class="form-group">
-                <label for="appointment-duration">Duración de Citas (minutos)</label>
-                <input type="number" id="appointment-duration" value="30" min="15" max="60">
-            </div>
-            
-            <div class="form-group">
-                <label for="working-hours">Horario de Trabajo</label>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="time" id="work-start" value="08:00">
-                    </div>
-                    <div class="form-group">
-                        <input type="time" id="work-end" value="18:00">
+            <form id="settings-form">
+                <div class="form-group">
+                    <label for="clinic-name">Nombre de la Clínica</label>
+                    <input type="text" id="clinic-name" name="clinic-name" value="Clínica Médica Especializada">
+                </div>
+                
+                <div class="form-group">
+                    <label for="clinic-address">Dirección</label>
+                    <input type="text" id="clinic-address" name="clinic-address" value="Calle 123 #45-67, Bogotá">
+                </div>
+                
+                <div class="form-group">
+                    <label for="clinic-phone">Teléfono</label>
+                    <input type="text" id="clinic-phone" name="clinic-phone" value="+57 1 234 5678">
+                </div>
+                
+                <div class="form-group">
+                    <label for="clinic-email">Email</label>
+                    <input type="email" id="clinic-email" name="clinic-email" value="info@clinica.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-duration">Duración de Citas (minutos)</label>
+                    <input type="number" id="appointment-duration" name="appointment-duration" value="30" min="15" max="60">
+                </div>
+                
+                <div class="form-group">
+                    <label for="working-hours">Horario de Trabajo</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="time" id="work-start" name="work-start" value="08:00">
+                        </div>
+                        <div class="form-group">
+                            <input type="time" id="work-end" name="work-end" value="18:00">
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <button class="btn btn-success">Guardar Configuración</button>
+                
+                <button type="submit" class="btn btn-success">Guardar Configuración</button>
+            </form>
         </div>
     </div>
 

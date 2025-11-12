@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const closeModalButtons = document.querySelectorAll('.close-modal');
 
+    // AÑADIDOS: Configuración
+    const settingsForm = document.getElementById('settings-form');
+
     // --- NAVEGACIÓN ---
     document.querySelectorAll('.menu-item').forEach(item => {
         if (item.dataset.section) {
@@ -48,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sectionId === 'doctors') cargarDoctores();
         if (sectionId === 'patients') cargarPacientes();
         if (sectionId === 'appointments') cargarCitas();
+        if (sectionId === 'settings') cargarConfiguracion();
     }
 
     // --- MANEJO DE MODALES ---
@@ -552,4 +556,59 @@ document.addEventListener('DOMContentLoaded', function() {
     citaDateInput.addEventListener('change', filtrarTablaCitas); // 'change' es mejor para date
     citaStatusInput.addEventListener('change', filtrarTablaCitas);
 
+        // --- AÑADIDO: LÓGICA DE CONFIGURACIÓN ---
+
+    /**
+     * Carga los datos de la BD en el formulario de configuración
+     */
+    function cargarConfiguracion() {
+        fetch('php/api_configuracion.php?accion=obtener')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.data) {
+                    const config = data.data;
+                    document.getElementById('clinic-name').value = config.nombre_clinica || '';
+                    document.getElementById('clinic-address').value = config.direccion_clinica || '';
+                    document.getElementById('clinic-phone').value = config.telefono_clinica || '';
+                    document.getElementById('clinic-email').value = config.email_clinica || '';
+                    document.getElementById('appointment-duration').value = config.duracion_cita || '30';
+                    document.getElementById('work-start').value = config.hora_inicio || '08:00';
+                    document.getElementById('work-end').value = config.hora_fin || '18:00';
+                } else {
+                    console.error('Error al cargar configuración:', data.message);
+                }
+            })
+            .catch(error => console.error('Error en fetch config:', error));
+    }
+
+    /**
+     * Guarda los datos del formulario de configuración en la BD
+     */
+    settingsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(settingsForm);
+        formData.append('accion', 'guardar');
+
+        fetch('php/api_configuracion.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error al guardar config:', error));
+    });
+
+    // Cargar la configuración por si 'settings' es la pestaña activa por defecto
+    if (document.getElementById('settings') && document.getElementById('settings').classList.contains('active')) {
+        cargarConfiguracion();
+    }
+
 });
+
