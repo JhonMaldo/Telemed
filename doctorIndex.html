@@ -127,7 +127,6 @@
         </div>
 
         <!-- Consultations Section MODIFICADA -->
-        <!-- Consultations Section -->
         <div id="consultations" class="content-section">
             <div class="section-header">
                 <h2 class="section-title">Consultas y Videollamadas</h2>
@@ -146,34 +145,31 @@
             </div>
         </div>
 
-        </div>
-
-        <!-- Medical Records Section -->
+        <!-- Medical Records Section MODIFICADA -->
         <div id="medical-records" class="content-section">
-            <h2 class="section-title">Expedientes Médicos</h2>
+            <div class="section-header">
+                <h2 class="section-title">Expedientes Médicos</h2>
+                <div class="loading" id="loading-expedientes" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+            
             <div class="records-container">
                 <div class="records-sidebar">
-                    <h3>Pacientes</h3>
-                    <div class="record-item active" data-patient="1">
-                        <h4>Juan Pérez</h4>
-                        <p>45 años · Hipertensión</p>
-                    </div>
-                    <div class="record-item" data-patient="2">
-                        <h4>María González</h4>
-                        <p>52 años · Cardiopatía</p>
-                    </div>
-                    <div class="record-item" data-patient="3">
-                        <h4>Carlos Rodríguez</h4>
-                        <p>38 años · Arritmia</p>
+                    <h3>Pacientes con Expediente</h3>
+                    <div id="lista-pacientes-expedientes">
+                        <!-- Los pacientes se cargarán aquí dinámicamente -->
+                        <p>Cargando pacientes...</p>
                     </div>
                 </div>
+                
                 <div class="records-content">
-                    <h3>Expediente de Juan Pérez</h3>
-                    <div class="form-group">
-                        <label for="patient-history">Historial Médico</label>
-                        <textarea id="patient-history" rows="6">Paciente con diagnóstico de hipertensión arterial desde 2018. Control regular con medicación.</textarea>
+                    <div id="expediente-detalle">
+                        <div class="no-expediente-selected" style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-file-medical" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                            <p>Selecciona un paciente para ver su expediente médico</p>
+                        </div>
                     </div>
-                    <button class="btn">Actualizar Expediente</button>
                 </div>
             </div>
         </div>
