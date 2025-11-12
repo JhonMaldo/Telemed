@@ -31,10 +31,6 @@
                 <i class="fas fa-calendar-alt"></i>
                 <span>Citas del Sistema</span>
             </div>
-            <div class="menu-item" data-section="users">
-                <i class="fas fa-users"></i>
-                <span>Usuarios del Sistema</span>
-            </div>
             <div class="menu-item" data-section="reports">
                 <i class="fas fa-chart-bar"></i>
                 <span>Reportes</span>
@@ -230,7 +226,12 @@
 
         <!-- Appointments Section -->
         <div id="appointments" class="content-section">
-            <h2 class="section-title">Citas del Sistema</h2>
+            <div class="section-title">
+                <h2>Citas del Sistema</h2>
+                <button class="btn btn-success" id="add-cita-btn">
+                    <i class="fas fa-plus"></i> Agregar Cita
+                </button>
+            </div>
             
             <div class="search-container">
                 <div class="search-box">
@@ -241,9 +242,10 @@
                     <input type="date" id="date-filter">
                     <select id="status-appointment-filter">
                         <option value="">Todos los estados</option>
-                        <option value="scheduled">Programada</option>
-                        <option value="completed">Completada</option>
-                        <option value="cancelled">Cancelada</option>
+                        <option value="programado">Programada</option>
+                        <option value="completada">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="no_llegó">No llegó</option>
                     </select>
                 </div>
             </div>
@@ -262,145 +264,8 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>APT-001</td>
-                            <td>Juan Pérez</td>
-                            <td>Dr. Laura Martínez</td>
-                            <td>15 Oct, 2023</td>
-                            <td>9:00 AM</td>
-                            <td>Consulta General</td>
-                            <td><span class="status-badge status-active">Programada</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>APT-002</td>
-                            <td>María González</td>
-                            <td>Dr. Carlos Rodríguez</td>
-                            <td>16 Oct, 2023</td>
-                            <td>10:30 AM</td>
-                            <td>Dermatología</td>
-                            <td><span class="status-badge status-active">Programada</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>APT-003</td>
-                            <td>Carlos Rodríguez</td>
-                            <td>Dra. María González</td>
-                            <td>14 Oct, 2023</td>
-                            <td>11:15 AM</td>
-                            <td>Pediatría</td>
-                            <td><span class="status-badge status-inactive">Completada</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    <tbody id="citas-table-body">
 
-        <!-- Users Section -->
-        <div id="users" class="content-section">
-            <h2 class="section-title">Usuarios del Sistema</h2>
-            
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Fecha Registro</th>
-                            <th>Último Acceso</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>USR-001</td>
-                            <td>Administrador</td>
-                            <td>admin@clinica.com</td>
-                            <td>Administrador</td>
-                            <td>01 Ene, 2023</td>
-                            <td>15 Oct, 2023 14:30</td>
-                            <td><span class="status-badge status-active">Activo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>USR-002</td>
-                            <td>Dr. Laura Martínez</td>
-                            <td>laura.martinez@clinica.com</td>
-                            <td>Doctor</td>
-                            <td>15 Feb, 2023</td>
-                            <td>15 Oct, 2023 13:15</td>
-                            <td><span class="status-badge status-active">Activo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>USR-003</td>
-                            <td>Juan Pérez</td>
-                            <td>juan.perez@example.com</td>
-                            <td>Paciente</td>
-                            <td>20 Mar, 2023</td>
-                            <td>15 Oct, 2023 11:45</td>
-                            <td><span class="status-badge status-active">Activo</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -608,7 +473,70 @@
         </div>
     </div>
 
+    <div id="cita-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="cita-modal-title">Programar Nueva Cita</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="cita-form">
+                <input type="hidden" id="cita-id" name="cita-id">
+                
+                <div class="form-group">
+                    <label for="cita-paciente">Paciente</label>
+                    <select id="cita-paciente" name="cita-paciente" required>
+                        <option value="">Cargando pacientes...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cita-doctor">Doctor</label>
+                    <select id="cita-doctor" name="cita-doctor" required>
+                        <option value="">Cargando doctores...</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cita-fecha">Fecha</label>
+                        <input type="date" id="cita-fecha" name="cita-fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cita-hora">Hora</label>
+                        <input type="time" id="cita-hora" name="cita-hora" required step="900"> </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cita-razon">Razón de la Cita</label>
+                    <input type="text" id="cita-razon" name="cita-razon" placeholder="Ej: Chequeo general, dolor de cabeza...">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cita-tipo">Tipo</label>
+                        <select id="cita-tipo" name="cita-tipo" required>
+                            <option value="virtual">Virtual</option>
+                            <option value="en_persona">En Persona</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cita-status">Estado</label>
+                        <select id="cita-status" name="cita-status" required>
+                            <option value="programado">Programada</option>
+                            <option value="completada">Completada</option>
+                            <option value="cancelada">Cancelada</option>
+                            <option value="no_llegó">No llegó</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-success">Guardar Cita</button>
+            </form>
+        </div>
+    </div>
+
     <script src="js/admin.js">
     </script>
+
 </body>
 </html>
