@@ -271,7 +271,6 @@
             </div>
         </div>
 
-        <!-- Reports Section -->
         <div id="reports" class="content-section">
             <h2 class="section-title">Reportes del Sistema</h2>
             
@@ -280,28 +279,69 @@
                     <i class="fas fa-file-pdf"></i>
                     <h3>Reporte de Doctores</h3>
                     <p>Listado completo de doctores</p>
-                    <button class="btn" style="margin-top: 15px;">Generar PDF</button>
+                    <button class="btn" id="btn-reporte-doctores" style="margin-top: 15px;">Generar PDF</button>
                 </div>
                 <div class="card">
                     <i class="fas fa-file-excel"></i>
                     <h3>Reporte de Pacientes</h3>
                     <p>Datos demográficos de pacientes</p>
-                    <button class="btn" style="margin-top: 15px;">Generar Excel</button>
+                    <button class="btn" id="btn-reporte-pacientes" style="margin-top: 15px;">Generar Excel</button>
                 </div>
                 <div class="card">
                     <i class="fas fa-chart-line"></i>
                     <h3>Estadísticas de Citas</h3>
                     <p>Métricas y tendencias</p>
-                    <button class="btn" style="margin-top: 15px;">Ver Reporte</button>
+                    <button class="btn" id="btn-reporte-stats-citas" style="margin-top: 15px;">Ver Reporte</button>
                 </div>
                 <div class="card">
                     <i class="fas fa-money-bill-wave"></i>
                     <h3>Reporte Financiero</h3>
                     <p>Ingresos y transacciones</p>
-                    <button class="btn" style="margin-top: 15px;">Generar</button>
+                    <button class="btn" id="btn-reporte-stats-financiero" style="margin-top: 15px;">Generar</button>
                 </div>
             </div>
-        </div>
+
+            <div id="reporte-stats-citas" class="report-container" style="display: none; margin-top: 30px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">Estadísticas de Citas</h3>
+                <div class="dashboard-cards" id="citas-stats-cards">
+                    </div>
+                <h4 style="margin-top: 20px;">Doctores más activos (Top 3)</h4>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Especialidad</th>
+                                <th>Citas Completadas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="citas-stats-top-doctores">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="reporte-stats-financiero" class="report-container" style="display: none; margin-top: 30px;">
+                <h3 class="section-title" style="margin-bottom: 20px;">Reporte Financiero</h3>
+                <div class="dashboard-cards" id="financiero-stats-cards">
+                    </div>
+                <h4 style="margin-top: 20px;">Últimas 5 Transacciones Pagadas</h4>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Pago</th>
+                                <th>Paciente</th>
+                                <th>Monto</th>
+                                <th>Fecha de Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financiero-stats-ultimos-pagos">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
 
         <!-- Settings Section -->
         <div id="settings" class="content-section">

@@ -610,5 +610,134 @@ document.addEventListener('DOMContentLoaded', function() {
         cargarConfiguracion();
     }
 
+    // --- AÑADIDO: LÓGICA DE REPORTES ---
+
+// Referencias a los contenedores de resultados
+const reporteStatsCitas = document.getElementById('reporte-stats-citas');
+const reporteStatsFinanciero = document.getElementById('reporte-stats-financiero');
+
+/**
+ * Listener para el botón de Reporte de Doctores (PDF)
+ */
+document.getElementById('btn-reporte-doctores').addEventListener('click', function() {
+    // Simplemente redirigimos al script de PHP, y el navegador gestionará la descarga
+    window.location.href = 'php/reporte_doctores_pdf.php';
+});
+
+/**
+ * Listener para el botón de Reporte de Pacientes (Excel/CSV)
+ */
+document.getElementById('btn-reporte-pacientes').addEventListener('click', function() {
+    // Igual que el PDF, el navegador gestiona la descarga
+    window.location.href = 'php/reporte_pacientes_excel.php';
+});
+
+/**
+ * Listener para el botón de Estadísticas de Citas
+ */
+document.getElementById('btn-reporte-stats-citas').addEventListener('click', function() {
+    // Ocultar el otro reporte si está visible
+    reporteStatsFinanciero.style.display = 'none';
+
+    fetch('php/api_reportes.php?accion=stats_citas')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                mostrarStatsCitas(data.data);
+                reporteStatsCitas.style.display = 'block'; // Mostrar contenedor
+            } else {
+                alert('Error al cargar estadísticas: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error fetch stats citas:', error));
+});
+
+/**
+ * Listener para el botón de Reporte Financiero
+ */
+document.getElementById('btn-reporte-stats-financiero').addEventListener('click', function() {
+    // Ocultar el otro reporte si está visible
+    reporteStatsCitas.style.display = 'none';
+
+    fetch('php/api_reportes.php?accion=stats_financiero')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                mostrarStatsFinanciero(data.data);
+                reporteStatsFinanciero.style.display = 'block'; // Mostrar contenedor
+            } else {
+                alert('Error al cargar reporte financiero: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error fetch stats financiero:', error));
+});
+
+
+/**
+ * Helper para poblar los datos de Estadísticas de Citas
+ */
+function mostrarStatsCitas(data) {
+    const cardsContainer = document.getElementById('citas-stats-cards');
+    cardsContainer.innerHTML = `
+        <div class="card"><h3>${data.total}</h3><p>Citas Totales</p></div>
+        <div class="card"><h3>${data.programadas}</h3><p>Citas Programadas</p></div>
+        <div class="card"><h3>${data.completadas}</h3><p>Citas Completadas</p></div>
+        <div class="card"><h3>${data.canceladas}</h3><p>Citas Canceladas</p></div>
+    `;
+
+    const topDoctoresBody = document.getElementById('citas-stats-top-doctores');
+    topDoctoresBody.innerHTML = '';
+    if (data.top_doctores.length > 0) {
+        data.top_doctores.forEach(doc => {
+            topDoctoresBody.innerHTML += `
+                <tr>
+                    <td>${doc.nombre_completo}</td>
+                    <td>${doc.especialidad}</td>
+                    <td>${doc.total_citas}</td>
+                </tr>
+            `;
+        });
+    } else {
+        topDoctoresBody.innerHTML = '<tr><td colspan="3">No hay datos de citas completadas.</td></tr>';
+    }
+}
+
+/**
+ * Helper para poblar los datos del Reporte Financiero
+ */
+function mostrarStatsFinanciero(data) {
+    const cardsContainer = document.getElementById('financiero-stats-cards');
+    // Formatear a moneda
+    const ingresos = parseFloat(data.ingresos_totales || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+    const reembolsado = parseFloat(data.total_reembolsado || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+
+    cardsContainer.innerHTML = `
+        <div class="card"><h3>${ingresos}</h3><p>Ingresos Totales (Pagado)</p></div>
+        <div class="card"><h3>${data.pagos_pendientes}</h3><p>Pagos Pendientes</p></div>
+        <div class="card"><h3>${reembolsado}</h3><p>Total Reembolsado</p></div>
+    `;
+
+    const ultimosPagosBody = document.getElementById('financiero-stats-ultimos-pagos');
+    ultimosPagosBody.innerHTML = '';
+    if (data.ultimos_pagos.length > 0) {
+        data.ultimos_pagos.forEach(pago => {
+            const monto = parseFloat(pago.cantidad).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+            // Formatear fecha
+            const fechaPago = new Date(pago.pagado_en).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' });
+            
+            ultimosPagosBody.innerHTML += `
+                <tr>
+                    <td>PAGO-${pago.id_pagos}</td>
+                    <td>${pago.paciente_nombre}</td>
+                    <td>${monto}</td>
+                    <td>${fechaPago}</td>
+                </tr>
+            `;
+        });
+    } else {
+        ultimosPagosBody.innerHTML = '<tr><td colspan="4">No hay transacciones pagadas recientes.</td></tr>';
+    }
+}
+
 });
 
