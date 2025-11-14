@@ -25,6 +25,9 @@ function showSection(sectionId) {
     if (sectionId === 'medical-records') {
         cargarExpedientes();
     }
+    if (sectionId === 'prescriptions') {
+        cargarRecetas();
+    }
     
     // Update section title
     const titles = {
@@ -358,6 +361,136 @@ function mostrarExpedienteDetalle(expediente) {
 function actualizarExpediente(idPaciente) {
     alert('Actualizando expediente del paciente ID: ' + idPaciente);
     // Aquí iría la lógica para guardar los cambios
+}
+
+// Función para cargar recetas
+function cargarRecetas() {
+    console.log('🔍 cargarRecetas() ejecutándose...');
+    
+    const loadingElement = document.getElementById('loading-recetas');
+    const container = document.getElementById('recetas-list-container');
+    const noRecetasMessage = document.getElementById('no-recetas-message');
+    
+    // VERIFICACIÓN EXTRA SEGURA
+    if (!loadingElement) {
+        console.error('❌ Elemento loading-recetas no encontrado');
+        return;
+    }
+    if (!container) {
+        console.error('❌ Elemento recetas-list-container no encontrado');
+        return;
+    }
+    
+    console.log('✅ Elementos HTML encontrados correctamente');
+    
+    loadingElement.style.display = 'block';
+    container.innerHTML = 'Cargando recetas...';
+    
+    if (noRecetasMessage) {
+        noRecetasMessage.style.display = 'none';
+    }
+
+    console.log('📡 Haciendo fetch a database/get_recetas.php...');
+    
+    fetch('database/get_recetas.php')
+        .then(response => {
+            console.log('📡 Status:', response.status);
+            console.log('📡 URL:', response.url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('✅ Datos recibidos:', data);
+            if (data.success) {
+                mostrarRecetas(data.recetas);
+            } else {
+                console.error('Error:', data.error);
+                container.innerHTML = '<div class="error-message">Error al cargar recetas: ' + data.error + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error completo:', error);
+            container.innerHTML = '<div class="error-message">Error de conexión: ' + error.message + '</div>';
+        })
+        .finally(() => {
+            loadingElement.style.display = 'none';
+        });
+}
+
+// Función para mostrar recetas
+function mostrarRecetas(recetas) {
+    const container = document.getElementById('recetas-list-container');
+    const noRecetasMessage = document.getElementById('no-recetas-message');
+    
+    if (!recetas || recetas.length === 0) {
+        noRecetasMessage.style.display = 'block';
+        return;
+    }
+
+    let html = '';
+    recetas.forEach(receta => {
+        const fecha = new Date(receta.fecha_emision);
+        const fechaFormateada = fecha.toLocaleDateString('es-ES');
+        
+        html += `
+            <div class="appointment-item" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                <div class="appointment-info">
+                    <h4>Receta #${receta.id_receta_medica} - ${receta.nombre_paciente}</h4>
+                    <p><i class="far fa-calendar"></i> <strong>Fecha de emisión:</strong> ${fechaFormateada}</p>
+                    <p><i class="fas fa-pills"></i> <strong>Tratamiento:</strong></p>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                        ${receta.id_receta.replace(/\n/g, '<br>')}
+                    </div>
+                    ${receta.url_pdf ? `<p><i class="fas fa-file-pdf"></i> <a href="${receta.url_pdf}" target="_blank">Ver PDF</a></p>` : ''}
+                </div>
+                <div class="appointment-actions" style="margin-top: 10px;">
+                    <button class="btn btn-success" onclick="imprimirReceta(${receta.id_receta_medica})">Imprimir</button>
+                    <button class="btn btn-warning" onclick="editarReceta(${receta.id_receta_medica})">Editar</button>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    noRecetasMessage.style.display = 'none';
+}
+
+// Modal functions
+function mostrarModalReceta() {
+    document.getElementById('modal-receta').style.display = 'block';
+    cargarPacientesParaReceta();
+    // Establecer fecha actual por defecto
+    document.getElementById('fecha-receta').valueAsDate = new Date();
+}
+
+function cerrarModalReceta() {
+    document.getElementById('modal-receta').style.display = 'none';
+}
+
+function cargarPacientesParaReceta() {
+    // Cargar lista de pacientes para el select
+    fetch('database/get_pacientes.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('paciente-receta');
+                select.innerHTML = '<option value="">Seleccionar paciente...</option>';
+                data.pacientes.forEach(paciente => {
+                    select.innerHTML += `<option value="${paciente.id_usuario}">${paciente.nombre_completo}</option>`;
+                });
+            }
+        });
+}
+
+// Placeholder functions
+function imprimirReceta(idReceta) {
+    alert('Imprimir receta ID: ' + idReceta);
+}
+
+function editarReceta(idReceta) {
+    alert('Editar receta ID: ' + idReceta);
 }
 
 // Medical Records - Patient Selection (mantener por compatibilidad)

@@ -175,15 +175,55 @@
         </div>
 
         <!-- Prescriptions Section -->
+        <!-- Prescriptions Section MODIFICADA -->
         <div id="prescriptions" class="content-section">
-            <h2 class="section-title">Gestión de Recetas Médicas</h2>
-            <div class="dashboard-cards">
-                <div class="card">
-                    <i class="fas fa-plus-circle"></i>
-                    <h3>Nueva Receta</h3>
-                    <p>Crear nueva receta médica</p>
-                    <button class="btn" style="margin-top: 15px;">Crear Receta</button>
+            <div class="section-header">
+                <h2 class="section-title">Gestión de Recetas Médicas</h2>
+                <div class="loading" id="loading-recetas" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
                 </div>
+                <button class="btn btn-success" onclick="mostrarModalReceta()">
+                    <i class="fas fa-plus"></i> Nueva Receta
+                </button>
+            </div>
+            
+            <div class="recetas-container" id="recetas-list-container">
+                <!-- Las recetas se cargarán aquí dinámicamente -->
+                <div class="no-recetas" id="no-recetas-message" style="display: none; text-align: center; padding: 40px; color: #666;">
+                    <i class="fas fa-file-prescription" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                    <p>No hay recetas médicas registradas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para nueva receta -->
+        <div id="modal-receta" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-content" style="background-color: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px;">
+                <span class="close" onclick="cerrarModalReceta()" style="float: right; font-size: 28px; cursor: pointer;">&times;</span>
+                <h3>Nueva Receta Médica</h3>
+                <form id="form-receta">
+                    <div class="form-group">
+                        <label for="paciente-receta">Paciente</label>
+                        <select id="paciente-receta" class="form-control" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                            <option value="">Seleccionar paciente...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="consulta-receta">Consulta Relacionada</label>
+                        <select id="consulta-receta" class="form-control" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                            <option value="">Seleccionar consulta...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medicamentos">Medicamentos y Tratamiento</label>
+                        <textarea id="medicamentos" rows="4" class="form-control" placeholder="Ej: Reposo relativo, omeprazol 20 mg 1 vez al día por 7 días..." required style="width: 100%; padding: 8px; margin: 5px 0;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-receta">Fecha de Emisión</label>
+                        <input type="date" id="fecha-receta" class="form-control" required style="width: 100%; padding: 8px; margin: 5px 0;">
+                    </div>
+                    <button type="submit" class="btn btn-success" style="margin-top: 15px;">Guardar Receta</button>
+                </form>
             </div>
         </div>
 
